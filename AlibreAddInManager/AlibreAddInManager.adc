@@ -1,0 +1,10 @@
+<AlibreDesignAddOn specificationVersion="2" friendlyName="Alibre Add-On Manager">
+   <Author name="David Bolsover" link="https://github.com/bolsover/AlibreAddInManager"/>
+   <Copyright>Copyright (c) 2026. David Bolsover</Copyright>
+   <DLL type="Managed" loadedWhen="Startup" location="AlibreAddInManager.dll"/>
+   <Icon location="AlibreAddInManager.ico"/>
+   <Menu text="Add-On Manager"/>
+   <Description>Install, update, disable and remove Alibre Design add-ons from an online directory or a package file.</Description>
+   <Workspace type="Always"/>
+   <Property name="Identifier" value="{925B370F-9858-4416-A7D9-1DD8FAAC16A0}"/>
+</AlibreDesignAddOn>
