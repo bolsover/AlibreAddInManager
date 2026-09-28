@@ -1,0 +1,10 @@
+<AlibreDesignAddOn specificationVersion="2" friendlyName="Alibre PDM API Sample">
+   <Author name="Alibre, LLC" link="https://www.alibre.com"/>
+   <Copyright>Copyright (c) 2025. Alibre, LLC</Copyright>
+   <DLL type="Managed" loadedWhen="Startup" location="AlibrePdmApiSample.dll"/>
+   <Icon location="AlibrePdmApiSample.ico"/>
+   <Menu text="PDM API Sample"/>
+   <Description>Sample of the Alibre PDM API: connect to a PDM server, browse safes, libraries, projects, folders and files, edit properties and check files in.</Description>
+   <Workspace type="Always"/>
+   <Property name="Identifier" value="{320B6FCE-3A12-4E64-8149-DF167B553713}"/>
+</AlibreDesignAddOn>

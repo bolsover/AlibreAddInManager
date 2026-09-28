@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "{320B6FCE-3A12-4E64-8149-DF167B553713}",
+  "name": "Alibre PDM API Sample",
+  "folderName": "AlibrePdmApiSample",
+  "version": "1.0.0",
+  "dllType": "managed",
+  "arch": "x64",
+  "minAlibreBuild": 29000,
+  "publisher": "Alibre, LLC",
+  "description": "Sample of the Alibre PDM API: browse PDM safes, edit properties and check files in."
+}

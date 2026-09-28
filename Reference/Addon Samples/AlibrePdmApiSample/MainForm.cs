@@ -9,6 +9,8 @@ namespace AlibrePdmApiSample
     {
         private IADRoot _apiRoot;
         private IADPDMServerConnection _serverConnection;
+        // False when _serverConnection is Alibre's own UI connection, which must not be logged out.
+        private bool _ownsConnection;
         private IADPDMSafe _currentSafe;
 
         // Current active container (Safe / Library / Project / Folder)
@@ -22,8 +24,10 @@ namespace AlibrePdmApiSample
         private string _pendingCheckInFileName = null;
 
 
-        public MainForm ()
+        /// <param name="apiRoot">The root handed to the add-on by the running Alibre Design.</param>
+        public MainForm (IADRoot apiRoot)
         {
+            _apiRoot = apiRoot;
             InitializeComponent ();
         }
 
@@ -31,28 +35,36 @@ namespace AlibrePdmApiSample
         {
             txtActiveContainer.Text = "";
             lblStatusMsg.Text = "";
+
+            if (_apiRoot == null)
+            {
+                lblStatusMsg.Text = "The Alibre Design API is not available.";
+                btnConnect.Enabled = false;
+                return;
+            }
+
+            _serverConnection = null;
+            _ownsConnection = false;
+
+            // Initial active container is the logical root of the PDM hierarchy.
+            txtActiveContainer.Text = "Root";
+
+            // Reuse the server connection Alibre Design is already logged in to, if any.
             try
             {
-                // Initialize Alibre Design API to run in GUI-less mode.
-                // This will cause Alibre to execute in the process space of 'this' application.
-                Type alibreType = Type.GetTypeFromProgID ("AlibreX.AutomationHook");
-                IAutomationHook hook = (IAutomationHook)Activator.CreateInstance (alibreType);
-                hook.Initialize (null, null, null, false, 0);
-                _apiRoot = (IADRoot)hook.Root;
-
-                _serverConnection = null;
-
-                // Initial active container is the logical root of the PDM hierarchy.
-                txtActiveContainer.Text = "Root";
-            }
-            catch (Exception ex)
-            {
-                lblStatusMsg.Text = "Failed to initialize API.\n";
-                lblStatusMsg.Text = lblStatusMsg + ex.Message + "\n";
-                if (ex.InnerException != null)
+                var active = _apiRoot.GetActiveServerConnection ();
+                if (active != null && active.IsOnline)
                 {
-                    lblStatusMsg.Text = lblStatusMsg + ex.InnerException.Message;
+                    _serverConnection = active;
+                    LoadSafes ();
+                    if (cmbSafe.Items.Count > 0)
+                        lblStatusMsg.Text = "Using Alibre Design's PDM connection. Select the Safe you want to access";
                 }
+            }
+            catch (Exception)
+            {
+                // No active connection: the user connects with the fields above.
+                _serverConnection = null;
             }
         }
 
@@ -79,6 +91,7 @@ namespace AlibrePdmApiSample
                         url = url + "/";
 
                     _serverConnection = _apiRoot.ConnectToPDM (url, domain, username, password);
+                    _ownsConnection = _serverConnection != null;
                 }
 
                 if (_serverConnection != null && _serverConnection.IsOnline)
@@ -385,12 +398,16 @@ namespace AlibrePdmApiSample
 
         private void btnClose_Click (object sender, EventArgs e)
         {
-            LogoutPDM ();
-            _apiRoot.TerminateAll ();
-            _apiRoot = null;
-
-            // Shutdown the Windows Form
+            // Logout happens in OnFormClosed. Never call _apiRoot.TerminateAll () here:
+            // the root belongs to the running Alibre Design, which it would shut down.
             Close ();
+        }
+
+        protected override void OnFormClosed (FormClosedEventArgs e)
+        {
+            LogoutPDM ();
+            _apiRoot = null;
+            base.OnFormClosed (e);
         }
 
         private void LoadSafes ()
@@ -825,6 +842,13 @@ namespace AlibrePdmApiSample
             txtActiveContainer.Clear ();
             cmbSafe.Items.Clear ();
 
+            // Alibre Design's own connection stays logged in; just let go of it.
+            if (_serverConnection != null && !_ownsConnection)
+            {
+                _serverConnection = null;
+                return;
+            }
+
             if (_serverConnection != null)
             {
                 Cursor previousCursor = this.Cursor;
@@ -833,6 +857,7 @@ namespace AlibrePdmApiSample
                 {
                     _serverConnection.Logout ();
                     _serverConnection = null;
+                    _ownsConnection = false;
                     lblStatusMsg.Text = "Logout successfull";
                 }
                 catch (Exception ex)

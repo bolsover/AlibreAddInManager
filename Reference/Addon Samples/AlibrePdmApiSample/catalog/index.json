@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "generated": "2026-09-28T00:00:00Z",
+  "addons": [
+    {
+      "id": "{320B6FCE-3A12-4E64-8149-DF167B553713}",
+      "name": "Alibre PDM API Sample",
+      "publisher": "Alibre, LLC",
+      "summary": "Browse PDM safes, edit properties and check files in",
+      "latestVersion": "1.0.0",
+      "workspaces": ["Always"],
+      "tags": ["pdm", "samples"],
+      "manifestUrl": "addons/{320B6FCE-3A12-4E64-8149-DF167B553713}.json",
+      "iconUrl": "addons/{320B6FCE-3A12-4E64-8149-DF167B553713}/icon.png"
+    }
+  ]
+}

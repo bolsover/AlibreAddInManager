@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "{320B6FCE-3A12-4E64-8149-DF167B553713}",
+  "name": "Alibre PDM API Sample",
+  "folderName": "AlibrePdmApiSample",
+  "publisher": { "name": "Alibre, LLC", "url": "https://www.alibre.com" },
+  "description": "Alibre's PDM API sample, repackaged as a managed Alibre Design add-on. Connects to a PDM server (or reuses Alibre Design's active connection), browses safes, libraries, projects, folders and files, edits properties and checks files in.",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "released": "2026-09-28",
+      "kind": "integrated",
+      "dllType": "managed",
+      "arch": "x64",
+      "minAlibreBuild": 29000,
+      "packageUrl": "packages/AlibrePdmApiSample-1.0.0.alibreaddon",
+      "sha256": "6f3c0857aa517a940986321660550713faac6d34dd039d23b3b0bbca948acc71",
+      "size": 20250,
+      "releaseNotes": "First release as an integrated add-on."
+    }
+  ]
+}

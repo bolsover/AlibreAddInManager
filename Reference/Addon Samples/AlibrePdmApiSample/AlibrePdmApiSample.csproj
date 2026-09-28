@@ -5,16 +5,23 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D569D0D7-B9EE-4D70-94C9-7B1964A9988B}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <!-- A managed Alibre add-on: a class library loaded into Alibre Design.exe. -->
+    <OutputType>Library</OutputType>
     <RootNamespace>AlibrePdmApiSample</RootNamespace>
     <AssemblyName>AlibrePdmApiSample</AssemblyName>
+    <!-- Alibre Design.exe.config declares sku .NETFramework,Version=v4.8; match the host. -->
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <LangVersion>7.3</LangVersion>
+    <!-- Alibre's AlibreX / AlibreAddOn interop assemblies are AMD64-only, and the
+         add-on only ever runs inside 64-bit Alibre. -->
+    <PlatformTarget>x64</PlatformTarget>
+    <!-- Alibre's Program folder, for the AlibreX / AlibreAddOn interop assemblies.
+         Override on the command line: /p:AlibreProgramDir=... -->
+    <AlibreProgramDir Condition=" '$(AlibreProgramDir)' == '' ">C:\Program Files\Alibre Design 29.1.0.29126\Program</AlibreProgramDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -32,29 +38,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
   <ItemGroup>
+    <!-- Private=False: Alibre already has these loaded; never ship copies. -->
+    <Reference Include="AlibreAddOn">
+      <HintPath>$(AlibreProgramDir)\AlibreAddOn.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="AlibreX">
-      <HintPath>..\..\..\..\dev\projects\current\alibre-apiinterface\bin\Debug\AlibreX.dll</HintPath>
+      <HintPath>$(AlibreProgramDir)\AlibreX.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -62,13 +54,13 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlibreAddOn.cs" />
     <Compile Include="ClassDataItemOption.cs" />
     <Compile Include="ContainerItem.cs" />
     <Compile Include="MainForm.cs">
@@ -77,8 +69,8 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="PdmApiSampleAddOn.cs" />
     <Compile Include="PDMTaskCallback.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyEditDialog.cs">
       <SubType>Form</SubType>
@@ -87,6 +79,7 @@
       <DependentUpon>PropertyEditDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="PropertyItem.cs" />
+    <Compile Include="WindowWrapper.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -110,7 +103,18 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <!-- The deploy folder: bin\<Config>\ is packaged as-is by tools\New-AlibreAddonPackage.ps1. -->
+    <Content Include="AlibrePdmApiSample.adc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="AlibrePdmApiSample.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="addon.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="New-PdmSampleIcon.ps1" />
+    <None Include="catalog\**\*" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
