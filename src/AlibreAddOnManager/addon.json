@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "{925B370F-9858-4416-A7D9-1DD8FAAC16A0}",
+  "name": "Alibre Add-On Manager",
+  "folderName": "AlibreAddOnManager",
+  "version": "1.0.0",
+  "dllType": "managed",
+  "arch": "x64",
+  "minAlibreBuild": 29000,
+  "publisher": "David Bolsover",
+  "description": "Install, update, disable and remove Alibre Design add-ons."
+}

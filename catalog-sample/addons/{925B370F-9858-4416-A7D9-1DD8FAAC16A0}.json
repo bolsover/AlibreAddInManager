@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "{925B370F-9858-4416-A7D9-1DD8FAAC16A0}",
   "name": "Alibre Add-On Manager",
-  "folderName": "AlibreAddInManager",
+  "folderName": "AlibreAddOnManager",
   "publisher": { "name": "David Bolsover", "url": "https://github.com/bolsover/AlibreAddInManager" },
   "license": "MIT",
   "homepage": "https://github.com/bolsover/AlibreAddInManager",
@@ -15,9 +15,9 @@
       "dllType": "managed",
       "arch": "x64",
       "minAlibreBuild": 29000,
-      "packageUrl": "packages/AlibreAddInManager-1.0.0.alibreaddon",
-      "sha256": "c0559126ab9499d7043955781a344f161192d028e2f49a9beeeadf5e916fd1be",
-      "size": 67109,
+      "packageUrl": "packages/AlibreAddOnManager-1.0.0.alibreaddon",
+      "sha256": "5318de47499db13bb51d3dacf8b3dad3f7bab322febe20ff2bb77a270a3911ee",
+      "size": 69031,
       "releaseNotes": "First release."
     }
   ]

@@ -13,7 +13,7 @@ param(
 $ErrorActionPreference = 'Stop'
 
 $AddOnGuid  = '{925B370F-9858-4416-A7D9-1DD8FAAC16A0}'
-$FolderName = 'AlibreAddInManager'
+$FolderName = 'AlibreAddOnManager'
 
 $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {

@@ -2,7 +2,7 @@
 <#
 .SYNOPSIS
     Bootstraps the Alibre Add-On Manager: copies the built add-on to
-    %ProgramData%\Alibre AddOns\AlibreAddInManager and registers it.
+    %ProgramData%\Alibre AddOns\AlibreAddOnManager and registers it.
 .DESCRIPTION
     Needed once — after that the manager updates itself from the catalog or a
     package. Re-launches itself elevated if necessary. Close Alibre Design first:
@@ -21,14 +21,14 @@ param(
 $ErrorActionPreference = 'Stop'
 
 $AddOnGuid  = '{925B370F-9858-4416-A7D9-1DD8FAAC16A0}'
-$FolderName = 'AlibreAddInManager'
+$FolderName = 'AlibreAddOnManager'
 $Files      = @(
-    'AlibreAddInManager.dll',
-    'AlibreAddInManager.adc',
-    'AlibreAddInManager.ico',
+    'AlibreAddOnManager.dll',
+    'AlibreAddOnManager.adc',
+    'AlibreAddOnManager.ico',
     'addon.json',
-    'AlibreAddInManager.Helper.exe',
-    'AlibreAddInManager.Helper.exe.config'
+    'AlibreAddOnManager.Helper.exe',
+    'AlibreAddOnManager.Helper.exe.config'
 )
 
 $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
@@ -44,7 +44,7 @@ try {
         throw 'Alibre Design is running. Save your work, close it, and run this script again.'
     }
 
-    $sourceDir = Join-Path $PSScriptRoot "..\AlibreAddInManager\bin\$Configuration"
+    $sourceDir = Join-Path $PSScriptRoot "..\src\AlibreAddOnManager\bin\$Configuration"
     $sourceDir = [System.IO.Path]::GetFullPath($sourceDir)
     foreach ($f in $Files) {
         if (-not (Test-Path -LiteralPath (Join-Path $sourceDir $f))) {
@@ -58,7 +58,7 @@ try {
     foreach ($f in $Files) {
         Copy-Item -LiteralPath (Join-Path $sourceDir $f) -Destination $targetDir -Force
     }
-    $pdb = Join-Path $sourceDir 'AlibreAddInManager.pdb'
+    $pdb = Join-Path $sourceDir 'AlibreAddOnManager.pdb'
     if ($Configuration -eq 'Debug' -and (Test-Path -LiteralPath $pdb)) { Copy-Item -LiteralPath $pdb -Destination $targetDir -Force }
 
     # .NET registry API, explicit 64-bit view. Not New-Item -Force: that opens

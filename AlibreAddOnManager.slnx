@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="src/AlibreAddOnManager/AlibreAddOnManager.csproj" Id="9096a4b4-2b5e-4a94-a35a-081af5d9e602" />
+  <Project Path="src/AlibreAddOnManager.Helper/AlibreAddOnManager.Helper.csproj" Id="d0b61c5f-f248-4e09-93e2-fb201febccc0" />
+  <Project Path="src/AlibreAddOnManager.Shared/AlibreAddOnManager.Shared.shproj" />
+</Solution>

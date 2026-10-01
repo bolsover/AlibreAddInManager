@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    Regenerates AlibreAddInManager\AlibreAddInManager.ico (16, 24, 32, 48 px).
+    Regenerates src\AlibreAddOnManager\AlibreAddOnManager.ico (16, 24, 32, 48 px).
 .DESCRIPTION
     Draws a blue rounded tile with a white "download into tray" glyph and writes a
     classic ICO with 32-bit BMP (DIB) entries — no PNG-compressed entries, so any
@@ -9,7 +9,7 @@
     Run with Windows PowerShell 5.1 (System.Drawing is part of .NET Framework).
 #>
 param(
-    [string]$OutFile = (Join-Path $PSScriptRoot '..\AlibreAddInManager\AlibreAddInManager.ico')
+    [string]$OutFile = (Join-Path $PSScriptRoot '..\src\AlibreAddOnManager\AlibreAddOnManager.ico')
 )
 
 Add-Type -AssemblyName System.Drawing

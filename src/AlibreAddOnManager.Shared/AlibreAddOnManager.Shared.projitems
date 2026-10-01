@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+        <HasSharedItems>true</HasSharedItems>
+        <SharedGUID>A150FB09-B5F1-4B4C-904B-348A225EAAB7</SharedGUID>
+    </PropertyGroup>
+    <PropertyGroup Label="Configuration">
+        <!-- Namespaces in this project are AlibreAddOnManager and AlibreAddOnManager.Models,
+             whichever assembly the files are compiled into. -->
+        <Import_RootNamespace>AlibreAddOnManager</Import_RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Include="$(MSBuildThisFileDirectory)AdcFile.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)AddOnDllType.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)AddOnRegistry.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)AddOnScanner.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)AddOnStatus.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)AlibreInstall.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)AlibreInstallDetector.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)InstalledAddOn.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)Json.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)ManagerPaths.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)PackageValidationResult.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)Packages.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)PeInfo.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)PeInspector.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)Models\AddOnManifest.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)Models\AddOnVersion.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)Models\CatalogEntry.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)Models\CatalogIndex.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)Models\DisabledAddOn.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)Models\InstallPlan.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)Models\ManagerSettings.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)Models\ManagerState.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)Models\PackageManifest.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)Models\PlanOperation.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)Models\PlanOperationKind.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)Models\PlanResult.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)Models\Publisher.cs"/>
+        <Compile Include="$(MSBuildThisFileDirectory)Models\TrackedAddOn.cs"/>
+    </ItemGroup>
+</Project>
