@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')"/>
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{D5D42F07-16B7-4F8E-B052-B1B7904C0CB1}</ProjectGuid>
+        <!-- A managed Alibre add-on: a class library loaded into Alibre Design.exe. -->
+        <OutputType>Library</OutputType>
+        <RootNamespace>CustomPropertyExplorer</RootNamespace>
+        <AssemblyName>CustomPropertyExplorer</AssemblyName>
+        <!-- Alibre Design.exe.config declares sku .NETFramework,Version=v4.8; match the host. -->
+        <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+        <FileAlignment>512</FileAlignment>
+        <Deterministic>true</Deterministic>
+        <LangVersion>7.3</LangVersion>
+        <!-- Alibre's AlibreX / AlibreAddOn interop assemblies are AMD64-only, and the
+             add-on only ever runs inside 64-bit Alibre. -->
+        <PlatformTarget>x64</PlatformTarget>
+        <!-- Alibre's Program folder, for the AlibreX / AlibreAddOn interop assemblies.
+             Override on the command line: /p:AlibreProgramDir=... -->
+        <AlibreProgramDir Condition=" '$(AlibreProgramDir)' == '' ">C:\Program Files\Alibre Design 29.1.0.29127\Program</AlibreProgramDir>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\Debug\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>bin\Release\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <ItemGroup>
+        <!-- Private=False: Alibre already has these loaded; never ship copies. -->
+        <Reference Include="AlibreAddOn">
+            <HintPath>$(AlibreProgramDir)\AlibreAddOn.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="AlibreX">
+            <HintPath>$(AlibreProgramDir)\AlibreX.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualBasic"/>
+        <Reference Include="System"/>
+        <Reference Include="System.Core"/>
+        <Reference Include="System.Drawing"/>
+        <Reference Include="System.Windows.Forms"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="AlibreAddOn.cs"/>
+        <Compile Include="AlibreVersion.cs"/>
+        <Compile Include="CustomPropertyExplorerAddOn.cs"/>
+        <Compile Include="Model\CustomProperties.cs"/>
+        <Compile Include="Model\DesignContext.cs"/>
+        <Compile Include="Model\PropertyBag.cs"/>
+        <Compile Include="Model\PropertyReader.cs"/>
+        <Compile Include="Ui\CustomPropertyDialogs.cs"/>
+        <Compile Include="Ui\CustomPropertyExplorerForm.cs">
+            <SubType>Form</SubType>
+        </Compile>
+        <Compile Include="Ui\ModelTreeBuilder.cs"/>
+        <Compile Include="Ui\PropertyExplorerForm.cs">
+            <SubType>Form</SubType>
+        </Compile>
+        <Compile Include="Ui\Theme.cs"/>
+        <Compile Include="Ui\WindowWrapper.cs"/>
+        <Compile Include="Properties\AssemblyInfo.cs"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="CustomPropertyExplorer.adc">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="CustomPropertyExplorer.ico">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="addon.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Include="README.md"/>
+        <None Include="deploy\install.ps1"/>
+        <None Include="deploy\uninstall.ps1"/>
+        <None Include="tools\New-Icon.ps1"/>
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
+</Project>

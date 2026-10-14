@@ -13,7 +13,6 @@ file. Design: [`src/AlibreAddOnManager/online-addon-directory.md`](src/AlibreAdd
 | `src/AlibreAddOnManager.Shared/` | Shared project (`.shproj`) compiled into both — no extra DLL: `.adc` reader, PE/DLL inspection, package validation, registry, scanner, JSON models. |
 | `deploy/` | `install.ps1` / `uninstall.ps1` — bootstrap the manager itself (one time). |
 | `tools/` | `New-AlibreAddonPackage.ps1` (build a package + catalog entry), `New-ManagerIcon.ps1`. |
-| `catalog-sample/` | A working local catalog listing the manager itself. |
 
 ## Build
 
@@ -43,7 +42,7 @@ After that the manager can update itself from a catalog or a package.
   hand-registered, or a dev build — can be disabled, files are never deleted),
   *Disabled*, *Broken* or *This add-on*.
 - **Available** tab — enter a catalog: an `https://…/index.json` URL, or a local
-  folder/file such as `…\catalog-sample`. Plain `http://` is refused.
+  folder/file such as `D:\catalog`. Plain `http://` is refused.
 - Actions are **queued**; **Apply changes** raises one UAC prompt for the batch.
   Anything that replaces or deletes files of a loaded add-on (updates,
   uninstalls, self-update) waits until Alibre Design has exited, then applies.

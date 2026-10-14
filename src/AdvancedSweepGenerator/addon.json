@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "{D23F2FF2-09A0-46B9-9D84-532C8561CFD5}",
+  "name": "Advanced Sweep Generator",
+  "folderName": "AdvancedSweepGenerator",
+  "version": "1.0.0",
+  "dllType": "managed",
+  "arch": "x64",
+  "minAlibreBuild": 29000,
+  "publisher": "Unknown",
+  "description": "Sweep a circular or square, solid or hollow profile along a 2D or 3D path sketch."
+}

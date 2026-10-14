@@ -1,0 +1,33 @@
+using System;
+using System.Text.RegularExpressions;
+using AlibreX;
+
+namespace CustomPropertyExplorer
+{
+    /// <summary>
+    /// Version gate. The add-on registration is global, so every installed Alibre
+    /// loads this DLL; refuse to run where the API it was built against is missing.
+    /// </summary>
+    internal static class AlibreVersion
+    {
+        /// <summary>V29 — the AlibreX type library this add-on is written against.</summary>
+        public const int MinimumBuild = 29000;
+
+        /// <summary>
+        /// The build number is the trailing number of IADRoot.Version
+        /// (e.g. "29.1.0.29127" → 29127). Returns 0 if it cannot be read.
+        /// </summary>
+        public static int GetBuild(IADRoot root)
+        {
+            string version;
+            try { version = root?.Version; }
+            catch (Exception) { return 0; }
+            if (string.IsNullOrEmpty(version)) return 0;
+
+            var numbers = Regex.Matches(version, @"\d+");
+            if (numbers.Count == 0) return 0;
+            int build;
+            return int.TryParse(numbers[numbers.Count - 1].Value, out build) ? build : 0;
+        }
+    }
+}

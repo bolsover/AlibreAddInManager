@@ -93,7 +93,9 @@ namespace AlibreAddOnManager.Ui
                     addOn.DllTypeText,
                     addOn.Folder ?? ""
                 }) { Tag = addOn };
-                if (addOn.Status == AddOnStatus.Broken || addOn.Problem != null)
+                if (addOn.Status == AddOnStatus.Warning)
+                    item.ForeColor = System.Drawing.Color.DarkOrange;
+                else if (addOn.Status == AddOnStatus.Broken || addOn.Problem != null)
                     item.ForeColor = System.Drawing.Color.Firebrick;
                 else if (addOn.Status == AddOnStatus.Disabled)
                     item.ForeColor = System.Drawing.SystemColors.GrayText;
@@ -120,7 +122,7 @@ namespace AlibreAddOnManager.Ui
         private void UpdateInstalledButtons()
         {
             var a = SelectedInstalled;
-            btnDisable.Enabled = a != null && (a.Status == AddOnStatus.Tracked || a.Status == AddOnStatus.External);
+            btnDisable.Enabled = a != null && (a.Status == AddOnStatus.Tracked || a.Status == AddOnStatus.External || a.Status == AddOnStatus.Warning);
             btnEnable.Enabled = a != null && a.Status == AddOnStatus.Disabled && a.Adc != null;
             btnUninstall.Enabled = a != null && a.Tracked != null && a.Status != AddOnStatus.Self;
             btnRemoveRegistration.Enabled = a != null && a.Status == AddOnStatus.Broken;

@@ -98,6 +98,33 @@ namespace AlibreAddOnManager
             return null;
         }
 
+        /// <summary>
+        /// Returns the folder's .adc when it holds exactly one readable .adc, whatever
+        /// its Identifier. Used when no .adc matches the registered id: Alibre still
+        /// loads such an add-on, so the lone .adc is the one it uses. Returns null if
+        /// the folder has no readable .adc or more than one (which one is ambiguous).
+        /// </summary>
+        public static AdcFile FindOnly(string folder)
+        {
+            if (!Directory.Exists(folder)) return null;
+            AdcFile found = null;
+            foreach (var file in Directory.GetFiles(folder, "*.adc"))
+            {
+                try
+                {
+                    var adc = Load(file);
+                    if (found != null) return null;
+                    found = adc;
+                }
+                catch (Exception)
+                {
+                    // Unreadable .adc: ignore it.
+                }
+            }
+
+            return found;
+        }
+
         /// <summary>Resolves the DLL location against the .adc's folder (it may be absolute).</summary>
         public string ResolveDllPath()
         {

@@ -9,8 +9,10 @@ namespace AlibreAddOnManager
 {
     /// <summary>
     /// Reads the static catalog (index.json + per-add-on manifests) and downloads
-    /// packages. Accepts https:// URLs, file:// URLs and plain local paths (for a
-    /// catalog on a share or in a checkout). Plain http:// is refused.
+    /// packages. Accepts https:// and http:// URLs, file:// URLs and plain local
+    /// paths (for a catalog on a share or in a checkout). Over http:// the sha256
+    /// check offers no tamper protection, since the manifest carrying the hash
+    /// arrives over the same unauthenticated channel.
     /// Catalog signature verification (design doc §3.3) is not implemented yet.
     /// </summary>
     public class CatalogClient
@@ -104,8 +106,9 @@ namespace AlibreAddOnManager
 
         private static Uri Check(Uri uri)
         {
-            if (uri.Scheme == Uri.UriSchemeHttps || uri.Scheme == Uri.UriSchemeFile) return uri;
-            throw new InvalidOperationException($"Only https:// or local catalogs are allowed (got {uri.Scheme}://).");
+            if (uri.Scheme == Uri.UriSchemeHttps || uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeFile)
+                return uri;
+            throw new InvalidOperationException($"Only http://, https:// or local catalogs are allowed (got {uri.Scheme}://).");
         }
 
         private static async Task<byte[]> ReadAsync(Uri uri)

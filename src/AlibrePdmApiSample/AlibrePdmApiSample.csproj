@@ -19,7 +19,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <!-- Alibre's Program folder, for the AlibreX / AlibreAddOn interop assemblies.
          Override on the command line: /p:AlibreProgramDir=... -->
-    <AlibreProgramDir Condition=" '$(AlibreProgramDir)' == '' ">C:\Program Files\Alibre Design 29.1.0.29126\Program</AlibreProgramDir>
+    <AlibreProgramDir Condition=" '$(AlibreProgramDir)' == '' ">C:\Program Files\Alibre Design 29.1.0.29127\Program</AlibreProgramDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

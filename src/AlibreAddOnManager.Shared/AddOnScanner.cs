@@ -50,6 +50,15 @@ namespace AlibreAddOnManager
                 else
                 {
                     item.Adc = AdcFile.FindForIdentifier(folder, id);
+                    var mismatch = false;
+                    if (item.Adc == null)
+                    {
+                        // Alibre still loads an add-on whose .adc Identifier differs from the
+                        // registered id, so a lone .adc in the folder is a warning, not a break.
+                        item.Adc = AdcFile.FindOnly(folder);
+                        mismatch = item.Adc != null;
+                    }
+
                     if (item.Adc == null)
                     {
                         item.Status = AddOnStatus.Broken;
@@ -59,13 +68,16 @@ namespace AlibreAddOnManager
                     else
                     {
                         item.Name = item.Adc.DisplayName;
-                        item.Status = ManagerPaths.SameId(id, ManagerPaths.SelfId) ? AddOnStatus.Self
+                        item.Status = mismatch ? AddOnStatus.Warning
+                            : ManagerPaths.SameId(id, ManagerPaths.SelfId) ? AddOnStatus.Self
                             : tracked != null ? AddOnStatus.Tracked
                             : AddOnStatus.External;
                         item.Version = tracked?.Version ?? DllFileVersion(item.Adc);
                         var dll = item.Adc.ResolveDllPath();
                         if (dll != null && !File.Exists(dll))
                             item.Problem = "DLL named in the .adc is missing: " + dll;
+                        else if (mismatch)
+                            item.Problem = IdentifierMismatch(id, item.Adc);
                     }
                 }
 
@@ -77,6 +89,13 @@ namespace AlibreAddOnManager
                 if (AddOnRegistry.FindValueName(registered, disabled.Id) != null) continue; // re-registered externally
                 var tracked = state.Tracked.FirstOrDefault(t => ManagerPaths.SameId(t.Id, disabled.Id));
                 var adc = AdcFile.FindForIdentifier(disabled.Folder, disabled.Id);
+                var mismatch = false;
+                if (adc == null)
+                {
+                    adc = AdcFile.FindOnly(disabled.Folder);
+                    mismatch = adc != null;
+                }
+
                 result.Add(new InstalledAddOn
                 {
                     Id = ManagerPaths.NormalizeId(disabled.Id),
@@ -86,13 +105,22 @@ namespace AlibreAddOnManager
                     Tracked = tracked,
                     Version = tracked?.Version ?? (adc != null ? DllFileVersion(adc) : null),
                     Status = AddOnStatus.Disabled,
-                    Problem = adc == null ? "Folder or .adc no longer present; Enable would register a broken add-on." : null
+                    Problem = adc == null ? "Folder or .adc no longer present; Enable would register a broken add-on."
+                        : mismatch ? IdentifierMismatch(ManagerPaths.NormalizeId(disabled.Id), adc)
+                        : null
                 });
             }
 
             return result.OrderBy(a => a.Status == AddOnStatus.Self ? 0 : 1)
                 .ThenBy(a => a.Name, StringComparer.CurrentCultureIgnoreCase)
                 .ToList();
+        }
+
+        private static string IdentifierMismatch(string registeredId, AdcFile adc)
+        {
+            var adcId = string.IsNullOrWhiteSpace(adc.Identifier) ? "(none)" : adc.Identifier.Trim();
+            return "Registered id " + registeredId + " does not match the Identifier " + adcId + " in "
+                   + Path.GetFileName(adc.Path) + ". Alibre still loads it, but the registry value name and the .adc Identifier should be the same GUID.";
         }
 
         private static string DllFileVersion(AdcFile adc)

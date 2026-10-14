@@ -8,7 +8,9 @@
     package root becomes the deploy folder. *.pdb files are left out unless
     -IncludePdb is given.
 .EXAMPLE
-    .\New-AlibreAddonPackage.ps1 -SourceDir ..\src\AlibreAddOnManager\bin\Release -OutDir ..\catalog-sample\packages
+    .\New-AlibreAddonPackage.ps1 -SourceDir ..\src\AlibreAddOnManager\bin\Release -OutDir D:\catalog\packages
+    .\New-AlibreAddonPackage.ps1 -SourceDir D:\02_Repository\02_Bolsover\AlibreAddInManager\src\AdvancedSweepGenerator\bin\Release -OutDir D:\catalog\packages
+    .\New-AlibreAddonPackage.ps1 -SourceDir D:\02_Repository\02_Bolsover\AlibreAddInManager\src\CustomPropertyExplorer\bin\Release -OutDir D:\catalog\packages
 #>
 param(
     [Parameter(Mandatory)] [string]$SourceDir,

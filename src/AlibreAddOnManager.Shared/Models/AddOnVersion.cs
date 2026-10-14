@@ -6,21 +6,21 @@ namespace AlibreAddOnManager.Models
     [DataContract]
     public class AddOnVersion
     {
-        [DataMember(Name = "version")] public string Version { get; set; }
-        [DataMember(Name = "released", EmitDefaultValue = false)] public string Released { get; set; }
+        [DataMember(Name = "version", Order = 1)] public string Version { get; set; }
+        [DataMember(Name = "released", Order = 2, EmitDefaultValue = false)] public string Released { get; set; }
         /// <summary>"integrated" (v1) — "standalone" is reserved for later.</summary>
-        [DataMember(Name = "kind", EmitDefaultValue = false)] public string Kind { get; set; }
+        [DataMember(Name = "kind", Order = 3, EmitDefaultValue = false)] public string Kind { get; set; }
         /// <summary>"native" or "managed"; must agree with the .adc &lt;DLL type&gt;.</summary>
-        [DataMember(Name = "dllType", EmitDefaultValue = false)] public string DllType { get; set; }
+        [DataMember(Name = "dllType", Order = 4, EmitDefaultValue = false)] public string DllType { get; set; }
         /// <summary>"x64", or "anycpu" for managed add-ons.</summary>
-        [DataMember(Name = "arch", EmitDefaultValue = false)] public string Arch { get; set; }
-        [DataMember(Name = "minAlibreBuild", EmitDefaultValue = false)] public int? MinAlibreBuild { get; set; }
-        [DataMember(Name = "maxAlibreBuild", EmitDefaultValue = false)] public int? MaxAlibreBuild { get; set; }
-        [DataMember(Name = "packageUrl")] public string PackageUrl { get; set; }
-        [DataMember(Name = "sha256")] public string Sha256 { get; set; }
-        [DataMember(Name = "size", EmitDefaultValue = false)] public long? Size { get; set; }
-        [DataMember(Name = "prerequisites", EmitDefaultValue = false)] public List<string> Prerequisites { get; set; }
-        [DataMember(Name = "releaseNotes", EmitDefaultValue = false)] public string ReleaseNotes { get; set; }
+        [DataMember(Name = "arch", Order = 5, EmitDefaultValue = false)] public string Arch { get; set; }
+        [DataMember(Name = "minAlibreBuild", Order = 6, EmitDefaultValue = false)] public int? MinAlibreBuild { get; set; }
+        [DataMember(Name = "maxAlibreBuild", Order = 7, EmitDefaultValue = false)] public int? MaxAlibreBuild { get; set; }
+        [DataMember(Name = "packageUrl", Order = 8)] public string PackageUrl { get; set; }
+        [DataMember(Name = "sha256", Order = 9)] public string Sha256 { get; set; }
+        [DataMember(Name = "size", Order = 10, EmitDefaultValue = false)] public long? Size { get; set; }
+        [DataMember(Name = "prerequisites", Order = 11, EmitDefaultValue = false)] public List<string> Prerequisites { get; set; }
+        [DataMember(Name = "releaseNotes", Order = 12, EmitDefaultValue = false)] public string ReleaseNotes { get; set; }
 
         public bool IsCompatibleWith(int build)
         {

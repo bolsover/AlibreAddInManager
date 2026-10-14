@@ -162,7 +162,7 @@ is the best starting template.
 | **Fully integrated add-on** | C++ / MFC (COM DLL) | Lives inside Alibre: ribbon menus, Design Explorer tab, canvas rendering, input/selection events, per-file persistent data | `IAlibreAddOn` COM interface in a DLL |
 
 The only **C# sample** is standalone PDM:
-`Reference/Addon Samples/AlibrePdmApiSample/` (.NET Framework 4.8, references
+`src/AlibrePdmApiSample/` (.NET Framework 4.8, references
 `AlibreX.dll`). The **integrated samples are all C++/MFC**: `SelectionAddOnSample`,
 `AnimationAddOn`, `DXSampleAddOn`.
 
@@ -521,7 +521,6 @@ Reference/
 │   ├─ 00_concepts.md        #   conceptual guides (add-ons, units, PDM, tips)
 │   └─ 01..11_*.md           #   per-domain member reference
 └─ Addon Samples/
-    ├─ AlibrePdmApiSample/   # C# standalone PDM app (.NET 4.8) — connection + PDM
     ├─ SelectionAddOnSample/ # C++/MFC integrated add-on — BEST starting template
     ├─ AnimationAddOn/       # C++/MFC integrated add-on — assembly animation
     └─ DXSampleAddOn/        # C++/MFC integrated add-on — DirectX canvas rendering
@@ -529,6 +528,9 @@ Reference/
 
 Each sample's `Docs/ReadMe.txt` has its own build & install steps. The `AlibreX`
 type library documented here is **v29**.
+
+The C# PDM sample (connection + PDM, .NET 4.8) is no longer under `Reference/`;
+it lives at `src/AlibrePdmApiSample/` as a project in `AlibreAddOnManager.slnx`.
 
 If `src/PartColorAddOn/` is present, it is a **known-good, built-and-installed
 integrated add-on** (changes the active part's color) that demonstrates the

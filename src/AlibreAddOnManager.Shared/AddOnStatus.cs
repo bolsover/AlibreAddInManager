@@ -11,6 +11,11 @@ namespace AlibreAddOnManager
         /// <summary>Registry value removed by Disable; can be restored.</summary>
         Disabled,
         /// <summary>Registry points at a missing folder, or no .adc there carries the id.</summary>
-        Broken
+        Broken,
+        /// <summary>
+        /// Loads in Alibre but is inconsistent: the folder's only .adc carries an Identifier
+        /// that differs from the registered id.
+        /// </summary>
+        Warning
     }
 }
