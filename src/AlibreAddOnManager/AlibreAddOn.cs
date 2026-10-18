@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using AlibreAddOn;
 using AlibreAddOnManager;
@@ -39,6 +40,25 @@ namespace AlibreAddOnAssembly
 
         public static void AddOnInvoke(IntPtr hwnd, IntPtr pAutomationHook, string sessionName, bool isLicensed, int reserved1, int reserved2)
         {
+            // try
+            // {
+            //     IAutomationHook hook;
+            //     if (pAutomationHook == IntPtr.Zero)
+            //         return ;
+            //     GCHandle handle = (GCHandle)pAutomationHook;
+            //     hook = (IAutomationHook) handle.Target;
+            //     // if (handles.unfreed.Contains(handle))
+            //     //     handles.unfreed.Remove(handle);
+            //     handle.Free();
+            //    
+            //     _root = (IADRoot) hook.Root;
+            //     _addOn = new AddOnManagerAddOn(_root, hwnd);
+            // }
+            // catch (Exception e)
+            // {
+            //     MessageBox.Show("Alibre Add-On Manager failed to load:\n\n" + e.Message,
+            //         AddOnManagerAddOn.Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            // }
         }
 
         public static void AddOnUnload(IntPtr hwnd, bool forceUnload, ref bool cancel, int reserved1, int reserved2)
