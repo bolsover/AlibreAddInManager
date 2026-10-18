@@ -6,8 +6,6 @@
       <Path>Reference</Path>
       <Path>Shared</Path>
       <Path>deploy</Path>
-      <Path>docs</Path>
-      <Path>tools</Path>
     </attachedFolders>
     <explicitIncludes />
     <explicitExcludes />
