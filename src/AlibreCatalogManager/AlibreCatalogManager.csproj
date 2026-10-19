@@ -33,8 +33,10 @@
     <ItemGroup>
         <None Include="..\..\README.md" Link="README.md"/>
     </ItemGroup>
-    <!-- Shared with the add-on manager: catalog and package models, validation, Alibre install
-         detection (no COM). It is also compiled into .NET Framework 4.8 add-ons there, so keep it
-         compatible with both. -->
-    <Import Project="..\..\..\AlibreAddInManager\src\AlibreAddOnManager.Shared\AlibreAddOnManager.Shared.projitems" Label="Shared"/>
+    <ItemGroup>
+      <ProjectReference Include="..\..\AlibreAddOnManager.Shared\AlibreAddOnManager.Shared.csproj" />
+      <ProjectReference Include="..\AlibreAddOnManager.Helper\AlibreAddOnManager.Helper.csproj" />
+      <ProjectReference Include="..\AlibreAddOnManager\AlibreAddOnManager.csproj" />
+    </ItemGroup>
+   
 </Project>

@@ -10,7 +10,7 @@
         <RootNamespace>AlibreAddOnManager</RootNamespace>
         <AssemblyName>AlibreAddOnManager</AssemblyName>
         <!-- Alibre Design.exe.config declares sku .NETFramework,Version=v4.8; match the host. -->
-        <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+        <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
         <Deterministic>true</Deterministic>
         <LangVersion>7.3</LangVersion>
@@ -95,7 +95,13 @@
         </Content>
         <None Include="online-addon-directory.md"/>
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\..\AlibreAddOnManager.Shared\AlibreAddOnManager.Shared.csproj">
+        <Project>{6a4e5175-cd1a-4372-84b7-73363f26e20d}</Project>
+        <Name>AlibreAddOnManager.Shared</Name>
+      </ProjectReference>
+    </ItemGroup>
     <!-- Source shared with the Helper, compiled into this assembly (no extra DLL). -->
-    <Import Project="..\AlibreAddOnManager.Shared\AlibreAddOnManager.Shared.projitems" Label="Shared"/>
+    
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
 </Project>
