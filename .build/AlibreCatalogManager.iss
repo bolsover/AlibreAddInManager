@@ -47,5 +47,5 @@ Source: "..\src\AlibreCatalogManager\bin\Release\AlibreCatalogManager.runtimecon
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 
 [Registry]
-; Root: HKLM; Subkey: "SOFTWARE\Alibre Design Add-Ons"; Flags: uninsdeletekeyifempty; Check: IsAdminInstallMode
-; Root: HKLM; Subkey: "SOFTWARE\Alibre Design Add-Ons"; ValueType: string; ValueName: "{{378829C4-F122-4617-92E0-E36ADD4F9AA8}"; ValueData: "{autopf}\{#MyAppName}"; Check: IsAdminInstallMode
+;Root: HKLM; Subkey: "SOFTWARE\Alibre Design Add-Ons"; Flags: uninsdeletekeyifempty; Check: IsAdminInstallMode
+;Root: HKLM; Subkey: "SOFTWARE\Alibre Design Add-Ons"; ValueType: string; ValueName: "{{378829C4-F122-4617-92E0-E36ADD4F9AA8}"; ValueData: "{autopf}\{#MyAppName}"; Check: IsAdminInstallMode

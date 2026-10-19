@@ -9,7 +9,7 @@
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-;AppId={{A9D330B0-C04E-41DA-8666-E543E16665C7}
+AppId={{925B370F-9858-4416-A7D9-1DD8FAAC16A0}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -17,7 +17,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={autopf}\AlibreAddOnManager
+DefaultDirName={autoappdata}\Alibre AddOns\{#MyAppName}
 DefaultGroupName={#MyAppName}
 
 ;PrivilegesRequired=lowest
@@ -27,8 +27,8 @@ OutputBaseFilename={#MyAppName}_{#MyAppVersion}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
-ArchitecturesAllowed=x64
-ArchitecturesInstallIn64BitMode=x64
+ArchitecturesAllowed=x64os
+ArchitecturesInstallIn64BitMode=x64os
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -42,6 +42,9 @@ Source: "..\src\AlibreAddOnManager\bin\Release\AlibreAddOnManager.Helper.exe.con
 Source: "..\src\AlibreAddOnManager\bin\Release\AlibreAddOnManager.Helper.pdb"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\src\AlibreAddOnManager\bin\Release\AlibreAddOnManager.pdb"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\src\AlibreAddOnManager\bin\Release\AlibreAddOnManager.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\src\AlibreAddOnManager\bin\Release\AlibreAddOnManager.Shared.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\src\AlibreAddOnManager\bin\Release\AlibreAddOnManager.Shared.pdb"; DestDir: "{app}"; Flags: ignoreversion
+
 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
@@ -50,5 +53,5 @@ Source: "..\src\AlibreAddOnManager\bin\Release\AlibreAddOnManager.ico"; DestDir:
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 
 [Registry]
-; Root: HKLM; Subkey: "SOFTWARE\Alibre Design Add-Ons"; Flags: uninsdeletekeyifempty; Check: IsAdminInstallMode
-; Root: HKLM; Subkey: "SOFTWARE\Alibre Design Add-Ons"; ValueType: string; ValueName: "{{378829C4-F122-4617-92E0-E36ADD4F9AA8}"; ValueData: "{autopf}\{#MyAppName}"; Check: IsAdminInstallMode
+Root: HKLM; Subkey: "SOFTWARE\Alibre Design Add-Ons"; Flags: uninsdeletekeyifempty; Check: IsAdminInstallMode
+Root: HKLM; Subkey: "SOFTWARE\Alibre Design Add-Ons"; ValueType: string; ValueName: "{{925B370F-9858-4416-A7D9-1DD8FAAC16A0}"; ValueData: "{autoappdata}\Alibre AddOns\{#MyAppName}"; Check: IsAdminInstallMode
