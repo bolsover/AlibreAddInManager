@@ -4,7 +4,7 @@
 #define MyAppName "AlibreCatalogManager"
 #define MyAppVersion "1.1"
 #define MyAppPublisher "David Bolsover"
-#define MyAppURL "https://github.com/bolsover/AlibreCatalogManager"
+#define MyAppURL "https://github.com/bolsover/AlibreAddOnManager"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -19,11 +19,10 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\AlibreCatalogManager
 DefaultGroupName={#MyAppName}
-;LicenseFile=D:\Repository\Jetbrains\Bolsover\AlibreCatalogManager\Copyright and License.txt
-; Uncomment the following line to run in non administrative install mode (install for current user only.)
+
 ;PrivilegesRequired=lowest
-OutputDir=D:\02_Repository\02_Bolsover\AlibreCatalogManager\bin\Setup
-OutputBaseFilename=AlibreCatalogManagerSetup
+OutputDir=..\src\AlibreCatalogManager\bin\Setup
+OutputBaseFilename={#MyAppName}_{#MyAppVersion}
 ;SetupIconFile=D:\Repository\Jetbrains\Bolsover\AlibreCatalogManager\nexus.ico
 Compression=lzma
 SolidCompression=yes
@@ -35,11 +34,11 @@ ArchitecturesInstallIn64BitMode=x64
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "D:\02_Repository\02_Bolsover\AlibreCatalogManager\src\AlibreCatalogManager\bin\Release\AlibreCatalogManager.deps.json"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\02_Repository\02_Bolsover\AlibreCatalogManager\src\AlibreCatalogManager\bin\Release\AlibreCatalogManager.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\02_Repository\02_Bolsover\AlibreCatalogManager\src\AlibreCatalogManager\bin\Release\AlibreCatalogManager.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\02_Repository\02_Bolsover\AlibreCatalogManager\src\AlibreCatalogManager\bin\Release\AlibreCatalogManager.pdb"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\02_Repository\02_Bolsover\AlibreCatalogManager\src\AlibreCatalogManager\bin\Release\AlibreCatalogManager.runtimeconfig.json"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\src\AlibreCatalogManager\bin\Release\AlibreCatalogManager.deps.json"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\src\AlibreCatalogManager\bin\Release\AlibreCatalogManager.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\src\AlibreCatalogManager\bin\Release\AlibreCatalogManager.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\src\AlibreCatalogManager\bin\Release\AlibreCatalogManager.pdb"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\src\AlibreCatalogManager\bin\Release\AlibreCatalogManager.runtimeconfig.json"; DestDir: "{app}"; Flags: ignoreversion
 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
