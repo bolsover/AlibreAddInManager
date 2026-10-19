@@ -1,0 +1,19 @@
+#pragma once
+
+#include "pch.h"
+
+// Version gate. The add-on registration is global, so every installed Alibre
+// loads this DLL; refuse to run where the API it was built against is missing.
+namespace AlibreVersion
+{
+    constexpr int MinimumBuild = %%MinAlibreBuild%%;
+
+    // IADRoot::Version, e.g. "29.1.0.29127", or empty if it cannot be read.
+    // Read by name through IDispatch: the type library spells the property
+    // "version", and its case is not guaranteed between Alibre releases.
+    std::wstring GetVersion(IADRoot* root);
+
+    // The build number is the trailing number of IADRoot::Version
+    // (e.g. "29.1.0.29127" -> 29127). Returns 0 if it cannot be read.
+    int GetBuild(IADRoot* root);
+}

@@ -1,0 +1,120 @@
+using System;
+using System.Windows.Forms;
+using AlibreAddOn;
+using AlibreX;
+
+namespace %%AddOnName%%
+{
+    /// <summary>
+    /// IAlibreAddOn: one root menu with one stateless command that does its work
+    /// in RunCommand and returns no command object.
+    /// </summary>
+    public class %%AddOnName%%AddOn : IAlibreAddOn
+    {
+        public const string Title = "%%FriendlyName%%";
+
+        private const int MenuIdRoot = %%MenuIdRoot%%;
+        private const int MenuIdCommand = %%MenuIdCommand%%;
+        private static readonly int[] SubMenuIds = { MenuIdCommand };
+
+        private readonly IADRoot _root;
+        private readonly IntPtr _parentWindow;
+        private readonly int _build;
+
+        public %%AddOnName%%AddOn(IADRoot root, IntPtr parentWindow)
+        {
+            _root = root;
+            _parentWindow = parentWindow;
+            _build = AlibreVersion.GetBuild(root);
+        }
+
+        private bool IsSupportedVersion => _build >= AlibreVersion.MinimumBuild;
+
+        public int RootMenuItem => MenuIdRoot;
+
+        public bool HasSubMenus(int menuId) => menuId == MenuIdRoot;
+
+        public Array SubMenuItems(int menuId) => menuId == MenuIdRoot ? SubMenuIds : new int[0];
+
+        public string MenuItemText(int menuId)
+        {
+            switch (menuId)
+            {
+                case MenuIdRoot: return "%%MenuText%%";
+                case MenuIdCommand: return Title;
+                default: return string.Empty;
+            }
+        }
+
+        public bool PopupMenu(int menuId) => menuId == MenuIdRoot;
+
+        public ADDONMenuStates MenuItemState(int menuId, string sessionIdentifier)
+        {
+            // The root stays enabled so the drop-down (and the tooltip explaining
+            // why the command is greyed) can always be opened.
+            if (menuId == MenuIdRoot) return ADDONMenuStates.ADDON_MENU_ENABLED;
+            return menuId == MenuIdCommand && IsSupportedVersion
+                ? ADDONMenuStates.ADDON_MENU_ENABLED
+                : ADDONMenuStates.ADDON_MENU_GRAYED;
+        }
+
+        public string MenuItemToolTip(int menuId)
+        {
+            if (menuId != MenuIdCommand) return string.Empty;
+            if (!IsSupportedVersion)
+                return "Requires Alibre Design build " + AlibreVersion.MinimumBuild + " or later (this is build " + _build + ")";
+            return "%%Description%%";
+        }
+
+        /// <summary>Icon file name, looked up in the folder holding the .adc.</summary>
+        public string MenuIcon(int menuId) => "%%AddOnName%%.ico";
+
+        public bool HasPersistentDataToSave(string sessionIdentifier) => false;
+
+        public IAlibreAddOnCommand InvokeCommand(int menuId, string sessionIdentifier)
+        {
+            if (menuId == MenuIdCommand) RunCommand(sessionIdentifier);
+            return null;
+        }
+
+        /// <summary>
+        /// The command's work. Called by <see cref="InvokeCommand"/> from the add-on's menu%%#HomeWorkspace%%,
+        /// and by AlibreAddOn.AddOnInvoke when the add-on is launched from the Home window%%/HomeWorkspace%%.
+        /// </summary>
+        /// <param name="session">The session identifier from the menu%%#HomeWorkspace%%, or the session name
+        /// from AddOnInvoke (empty when launched from the Home window)%%/HomeWorkspace%%.</param>
+        public void RunCommand(string session)
+        {
+            try
+            {
+                if (!IsSupportedVersion)
+                {
+                    MessageBox.Show(MenuItemToolTip(MenuIdCommand), Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // TODO: the add-on's work goes here.
+                MessageBox.Show(Title + " is running in Alibre Design " + _root.Version + ".", Title,
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString(), Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public void LoadData(IStream pCustomData, string sessionIdentifier)
+        {
+        }
+
+        public void SaveData(IStream pCustomData, string sessionIdentifier)
+        {
+        }
+
+        public void setIsAddOnLicensed(bool isLicensed)
+        {
+        }
+
+        public bool UseDedicatedRibbonTab() => false;
+    }
+}

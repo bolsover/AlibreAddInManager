@@ -1,0 +1,115 @@
+<UserControl x:Class="AlibreCatalogManager.Ui.NewAddOnView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="0,0,4,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Content="Lan_guage:" Target="{Binding ElementName=LanguageBox}" Style="{StaticResource FormLabel}"/>
+            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="LanguageBox" SelectionChanged="OnLanguageChanged"
+                      ToolTip="C#: a managed add-on. C++: a native add-on; build it with Visual Studio's MSBuild (C++ workload)."/>
+
+            <Label Grid.Row="1" Content="_Project name:" Target="{Binding ElementName=NameBox}" Style="{StaticResource FormLabel}"/>
+            <TextBox Grid.Row="1" Grid.Column="1" x:Name="NameBox" TextChanged="OnNameChanged"
+                     ToolTip="Identifier used for the project, DLL, namespace or class names and deploy folder, e.g. MyTool."/>
+
+            <Label Grid.Row="2" Content="_Display name:" Target="{Binding ElementName=FriendlyNameBox}" Style="{StaticResource FormLabel}"/>
+            <TextBox Grid.Row="2" Grid.Column="1" x:Name="FriendlyNameBox"
+                     ToolTip="The add-on's friendly name, shown by Alibre and in the catalog."/>
+
+            <Label Grid.Row="3" Content="_Menu text:" Target="{Binding ElementName=MenuTextBox}" Style="{StaticResource FormLabel}"/>
+            <TextBox Grid.Row="3" Grid.Column="1" x:Name="MenuTextBox"
+                     ToolTip="Text of the add-on's root menu on the Add-Ons ribbon."/>
+
+            <Label Grid.Row="4" Content="_Author:" Target="{Binding ElementName=AuthorBox}" Style="{StaticResource FormLabel}"/>
+            <TextBox Grid.Row="4" Grid.Column="1" x:Name="AuthorBox"/>
+
+            <Label Grid.Row="5" Content="Author _link:" Target="{Binding ElementName=AuthorLinkBox}" Style="{StaticResource FormLabel}"/>
+            <TextBox Grid.Row="5" Grid.Column="1" x:Name="AuthorLinkBox" ToolTip="Optional http(s) URL."/>
+
+            <Label Grid.Row="6" Content="D_escription:" Target="{Binding ElementName=DescriptionBox}" Style="{StaticResource FormLabel}"
+                   VerticalAlignment="Top"/>
+            <TextBox Grid.Row="6" Grid.Column="1" x:Name="DescriptionBox" Height="60" AcceptsReturn="True" TextWrapping="Wrap"
+                     VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top"
+                     ToolTip="Used in the .adc, addon.json, the assembly and the command tooltip."/>
+
+            <Label Grid.Row="7" Content="_Workspace:" Target="{Binding ElementName=WorkspaceBox}" Style="{StaticResource FormLabel}"/>
+            <ComboBox Grid.Row="7" Grid.Column="1" x:Name="WorkspaceBox"
+                      ToolTip="Where the add-on loads. &quot;Always&quot; plus MenuItemState filtering is usually better than Part, which excludes sheet metal. Home: launched from the Home window's Add-ons list, which calls AddOnInvoke; the generated AddOnInvoke runs the command."/>
+
+            <Label Grid.Row="8" Content="_Version:" Target="{Binding ElementName=VersionBox}" Style="{StaticResource FormLabel}"/>
+            <TextBox Grid.Row="8" Grid.Column="1" x:Name="VersionBox" Text="1.0.0" ToolTip="Catalog version, major.minor.patch."/>
+
+            <Label Grid.Row="9" Content="Minimum Alibre _build:" Target="{Binding ElementName=MinBuildBox}" Style="{StaticResource FormLabel}"/>
+            <TextBox Grid.Row="9" Grid.Column="1" x:Name="MinBuildBox" Text="29000" Width="100" HorizontalAlignment="Left"
+                     ToolTip="The add-on greys its command out below this build (the trailing number of IADRoot.Version). 29000 = V29."/>
+
+            <Label Grid.Row="10" Content="Identifier:" Style="{StaticResource FormLabel}"/>
+            <TextBox Grid.Row="10" Grid.Column="1" x:Name="IdBox" IsReadOnly="True"
+                     ToolTip="The .adc Identifier and registry value name. Fresh for every add-on."/>
+            <Button Grid.Row="10" Grid.Column="2" Content="New" Click="OnNewId"/>
+
+            <Label Grid.Row="11" Content="Alibre P_rogram folder:" Target="{Binding ElementName=AlibreDirBox}" Style="{StaticResource FormLabel}"/>
+            <ComboBox Grid.Row="11" Grid.Column="1" x:Name="AlibreDirBox" IsEditable="True"
+                      ToolTip="Where the project references AlibreX.dll and AlibreAddOn.dll (C++: AlibreX_64.tlb and AlibreAddOn_64.tlb) from. Override at build time with /p:AlibreProgramDir=..."/>
+            <Button Grid.Row="11" Grid.Column="2" Content="Browse…" Click="OnBrowseAlibre"/>
+
+            <Label Grid.Row="12" Content="_Output folder:" Target="{Binding ElementName=OutputRootBox}" Style="{StaticResource FormLabel}"/>
+            <TextBox Grid.Row="12" Grid.Column="1" x:Name="OutputRootBox" TextChanged="OnOutputRootChanged"
+                     ToolTip="The project is created in a sub-folder named after the project."/>
+            <Button Grid.Row="12" Grid.Column="2" Content="Browse…" Click="OnBrowseOutput"/>
+
+            <Label Grid.Row="13" Content="_Icon:" Target="{Binding ElementName=IconColorButton}" Style="{StaticResource FormLabel}"/>
+            <StackPanel Grid.Row="13" Grid.Column="1" Orientation="Horizontal">
+                <Button x:Name="IconColorButton" Content="Colour…" Width="90" Margin="0,3" Click="OnPickColor"
+                        ToolTip="A placeholder icon is drawn with the display name's initials on this colour."/>
+                <Popup x:Name="ColorPopup" PlacementTarget="{Binding ElementName=IconColorButton}" Placement="Bottom"
+                       StaysOpen="False" AllowsTransparency="True">
+                    <Border Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+                            BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="1" Padding="6">
+                        <StackPanel>
+                            <WrapPanel x:Name="Swatches" Width="200"/>
+                            <DockPanel Margin="0,6,0,0">
+                                <Button DockPanel.Dock="Right" Content="Apply" MinWidth="0" Click="OnApplyHex"/>
+                                <TextBlock Text="#" VerticalAlignment="Center" Margin="0,0,2,0"/>
+                                <TextBox x:Name="HexBox" Margin="0" KeyDown="OnHexKeyDown" ToolTip="RRGGBB"/>
+                            </DockPanel>
+                        </StackPanel>
+                    </Border>
+                </Popup>
+            </StackPanel>
+
+            <CheckBox Grid.Row="14" Grid.Column="1" x:Name="DeployScriptsBox" Content="Include deploy\install.ps1 and uninstall.ps1"
+                      IsChecked="True" ToolTip="Elevated scripts that copy the build output to ProgramData and register it."/>
+            <CheckBox Grid.Row="15" Grid.Column="1" x:Name="AddToSolutionBox" Content="Add the project to the solution"/>
+            <TextBlock Grid.Row="16" Grid.Column="1" x:Name="TargetText" Style="{StaticResource Hint}"/>
+
+            <Button Grid.Row="17" Grid.Column="0" Grid.ColumnSpan="3" x:Name="GenerateButton" Content="Generate"
+                    HorizontalAlignment="Right" Margin="0,8,0,0" Click="OnGenerate"/>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

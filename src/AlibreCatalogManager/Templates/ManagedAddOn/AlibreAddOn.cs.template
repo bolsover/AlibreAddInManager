@@ -1,0 +1,64 @@
+using System;
+using System.Windows.Forms;
+using %%AddOnName%%;
+using AlibreAddOn;
+using AlibreX;
+
+// ReSharper disable once CheckNamespace
+namespace AlibreAddOnAssembly
+{
+    /// <summary>
+    /// Entry points for a managed (.adc &lt;DLL type="Managed"&gt;) add-on. Alibre
+    /// looks for this exact type name, AlibreAddOnAssembly.AlibreAddOn, and calls
+    /// its static methods — the managed counterpart of the C++ exports
+    /// AddOnLoad / AddOnInvoke / AddOnUnload / GetAddOnInterface.
+    /// </summary>
+    public static class AlibreAddOn
+    {
+        private static IADRoot _root;
+        private static %%AddOnName%%AddOn _addOn;
+
+        public static void AddOnLoad(IntPtr hwnd, IAutomationHook pAutomationHook, IntPtr unused)
+        {
+            try
+            {
+                _root = (IADRoot) pAutomationHook.Root;
+                _addOn = new %%AddOnName%%AddOn(_root, hwnd);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(%%AddOnName%%AddOn.Title + " failed to load:\n\n" + e.Message,
+                    %%AddOnName%%AddOn.Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public static IADRoot GetRoot()
+        {
+            return _root;
+        }
+
+%%#HomeWorkspace%%
+        /// <summary>
+        /// Called when the user launches the add-on from the Home window (Utilities → Add-ons…),
+        /// where sessionName is empty, or from an open session's Add-Ons menu.
+        /// </summary>
+%%/HomeWorkspace%%
+        public static void AddOnInvoke(IntPtr hwnd, IntPtr pAutomationHook, string sessionName, bool isLicensed, int reserved1, int reserved2)
+        {
+%%#HomeWorkspace%%
+            _addOn?.RunCommand(sessionName ?? string.Empty);
+%%/HomeWorkspace%%
+        }
+
+        public static void AddOnUnload(IntPtr hwnd, bool forceUnload, ref bool cancel, int reserved1, int reserved2)
+        {
+            _addOn = null;
+            _root = null;
+        }
+
+        public static IAlibreAddOn GetAddOnInterface()
+        {
+            return _addOn;
+        }
+    }
+}

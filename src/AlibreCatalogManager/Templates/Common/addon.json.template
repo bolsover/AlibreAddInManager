@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "%%AddOnGuid%%",
+  "name": "%%FriendlyName%%",
+  "folderName": "%%AddOnName%%",
+  "version": "%%Version%%",
+  "dllType": "%%ManifestDllType%%",
+  "arch": "x64",
+  "minAlibreBuild": %%MinAlibreBuild%%,
+  "publisher": "%%AuthorName%%",
+  "description": "%%Description%%"
+}

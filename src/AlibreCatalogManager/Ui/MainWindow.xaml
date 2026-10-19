@@ -1,0 +1,19 @@
+<Window x:Class="AlibreCatalogManager.Ui.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Alibre Catalog Manager"
+        Width="1100" Height="720" MinWidth="800" MinHeight="560"
+        WindowStartupLocation="CenterScreen"
+        UseLayoutRounding="True">
+    <TabControl x:Name="Tabs" Margin="4">
+        <TabItem x:Name="CatalogTab" Header="Catalog">
+            <ContentControl x:Name="CatalogHost" Margin="2"/>
+        </TabItem>
+        <TabItem Header="New Add-On">
+            <ContentControl x:Name="NewAddOnHost" Margin="8"/>
+        </TabItem>
+        <TabItem Header="Package &amp; Publish">
+            <ContentControl x:Name="PublishHost" Margin="8"/>
+        </TabItem>
+    </TabControl>
+</Window>

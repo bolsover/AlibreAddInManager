@@ -1,0 +1,15 @@
+// Precompiled header: Windows, COM support and the Alibre type libraries.
+#pragma once
+
+#include <windows.h>
+#include <comdef.h>
+#include <string>
+
+// Found on the include path, which the project points at Alibre's Program folder.
+// AlibreX: the automation API that drives Alibre (smart pointers, throws _com_error).
+#import "AlibreX_64.tlb"
+using namespace AlibreX;
+
+// AlibreAddOn: the integration API (IAlibreAddOn and friends), raw HRESULT methods.
+#import "AlibreAddOn_64.tlb" raw_interfaces_only
+using namespace AlibreAddOn;

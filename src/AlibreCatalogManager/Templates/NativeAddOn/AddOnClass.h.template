@@ -1,0 +1,61 @@
+#pragma once
+
+#include "pch.h"
+#include "AlibreVersion.h"
+
+// IAlibreAddOn: one root menu with one stateless command that does its work
+// in RunCommand and returns no command object.
+class %%AddOnName%%AddOn : public IAlibreAddOn
+{
+public:
+    static constexpr const wchar_t* Title = L"%%FriendlyName%%";
+
+    %%AddOnName%%AddOn(IADRoot* root, HWND parentWindow);
+    virtual ~%%AddOnName%%AddOn() = default;
+
+    %%AddOnName%%AddOn(const %%AddOnName%%AddOn&) = delete;
+    %%AddOnName%%AddOn& operator=(const %%AddOnName%%AddOn&) = delete;
+
+    // The command's work, with message boxes owned by owner. Never throws.
+    void RunCommand(HWND owner);
+
+    // IUnknown
+    HRESULT __stdcall QueryInterface(REFIID riid, void** ppvObject) override;
+    ULONG __stdcall AddRef() override;
+    ULONG __stdcall Release() override;
+
+    // IDispatch: Alibre calls through the vtable, so no type information is offered.
+    HRESULT __stdcall GetTypeInfoCount(UINT* pctinfo) override;
+    HRESULT __stdcall GetTypeInfo(UINT iTInfo, LCID lcid, ITypeInfo** ppTInfo) override;
+    HRESULT __stdcall GetIDsOfNames(REFIID riid, LPOLESTR* rgszNames, UINT cNames, LCID lcid, DISPID* rgDispId) override;
+    HRESULT __stdcall Invoke(DISPID dispIdMember, REFIID riid, LCID lcid, WORD wFlags, DISPPARAMS* pDispParams,
+                             VARIANT* pVarResult, EXCEPINFO* pExcepInfo, UINT* puArgErr) override;
+
+    // IAlibreAddOn
+    HRESULT __stdcall get_RootMenuItem(long* pRootMenuID) override;
+    HRESULT __stdcall HasSubMenus(long menuID, VARIANT_BOOL* pHasSubMenus) override;
+    HRESULT __stdcall SubMenuItems(long menuID, SAFEARRAY** pSubMenuIDs) override;
+    HRESULT __stdcall MenuItemText(long menuID, BSTR* pMenuDisplayText) override;
+    HRESULT __stdcall PopupMenu(long menuID, VARIANT_BOOL* pIsPopup) override;
+    HRESULT __stdcall HasPersistentDataToSave(BSTR sessionIdentifier, VARIANT_BOOL* pHasData) override;
+    HRESULT __stdcall MenuItemState(long menuID, BSTR sessionIdentifier, enum ADDONMenuStates* pType) override;
+    HRESULT __stdcall MenuItemToolTip(long menuID, BSTR* pToolTip) override;
+    HRESULT __stdcall InvokeCommand(long menuID, BSTR sessionIdentifier, IAlibreAddOnCommand** pCommand) override;
+    HRESULT __stdcall LoadData(IStream* pCustomData, BSTR sessionIdentifier) override;
+    HRESULT __stdcall SaveData(IStream* pCustomData, BSTR sessionIdentifier) override;
+    HRESULT __stdcall setIsAddOnLicensed(VARIANT_BOOL isLicensed) override;
+    HRESULT __stdcall MenuIcon(long menuID, BSTR* pIconFile) override;
+    HRESULT __stdcall UseDedicatedRibbonTab(VARIANT_BOOL* pUseTab) override;
+
+private:
+    static constexpr long MenuIdRoot = %%MenuIdRoot%%;
+    static constexpr long MenuIdCommand = %%MenuIdCommand%%;
+
+    bool IsSupportedVersion() const { return _build >= AlibreVersion::MinimumBuild; }
+    std::wstring CommandToolTip() const;
+
+    LONG _refCount = 1;
+    IADRootPtr _root;
+    HWND _parentWindow;
+    int _build;
+};

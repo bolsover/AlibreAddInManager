@@ -1,0 +1,69 @@
+// Entry points for a native add-on (.adc <DLL> with no type attribute). Alibre looks up
+// these undecorated exports by name: AddOnLoad / AddOnInvoke / AddOnUnload are
+// mandatory, GetAddOnInterface gives Alibre the IAlibreAddOn for the menus.
+#include "pch.h"
+#include "%%AddOnName%%AddOn.h"
+
+#define ALIBRE_EXPORT extern "C" __declspec(dllexport)
+
+namespace
+{
+    IADRootPtr g_root;
+
+    // One reference, held from AddOnLoad to AddOnUnload.
+    %%AddOnName%%AddOn* g_addOn = nullptr;
+}
+
+ALIBRE_EXPORT void AddOnLoad(HWND windowHandle, void* pAutomationHook, void* /*reserved*/)
+{
+    try
+    {
+        auto* hook = static_cast<IAutomationHook*>(pAutomationHook);
+        g_root = hook->GetRoot();
+        g_addOn = new %%AddOnName%%AddOn(g_root, windowHandle);
+    }
+    catch (const _com_error& e)
+    {
+        const std::wstring message = std::wstring(%%AddOnName%%AddOn::Title) + L" failed to load:\n\n" + e.ErrorMessage();
+        MessageBoxW(windowHandle, message.c_str(), %%AddOnName%%AddOn::Title, MB_OK | MB_ICONERROR);
+    }
+    catch (...)
+    {
+        const std::wstring message = std::wstring(%%AddOnName%%AddOn::Title) + L" failed to load.";
+        MessageBoxW(windowHandle, message.c_str(), %%AddOnName%%AddOn::Title, MB_OK | MB_ICONERROR);
+    }
+}
+
+%%#HomeWorkspace%%
+// Called when the user launches the add-on from the Home window (Utilities -> Add-ons...),
+// where sessionName is empty, or from an open session's Add-Ons menu.
+ALIBRE_EXPORT void AddOnInvoke(HWND windowHandle, void* /*pAutomationHook*/, LPCSTR /*sessionName*/,
+                               BOOL /*isLicensed*/, void* /*reserved1*/, void* /*reserved2*/)
+{
+    if (g_addOn != nullptr) g_addOn->RunCommand(windowHandle);
+}
+%%/HomeWorkspace%%
+%%^HomeWorkspace%%
+ALIBRE_EXPORT void AddOnInvoke(HWND /*windowHandle*/, void* /*pAutomationHook*/, LPCSTR /*sessionName*/,
+                               BOOL /*isLicensed*/, void* /*reserved1*/, void* /*reserved2*/)
+{
+}
+%%/HomeWorkspace%%
+
+ALIBRE_EXPORT void AddOnUnload(HWND /*windowHandle*/, BOOL /*forceUnload*/, BOOL* /*cancel*/,
+                               void* /*reserved1*/, void* /*reserved2*/)
+{
+    if (g_addOn != nullptr)
+    {
+        g_addOn->Release();
+        g_addOn = nullptr;
+    }
+    g_root = nullptr;
+}
+
+// As in Alibre's samples, the caller gets the pointer without an extra
+// reference; the DLL's own reference keeps the object alive until unload.
+ALIBRE_EXPORT IUnknown* GetAddOnInterface()
+{
+    return g_addOn;
+}

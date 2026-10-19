@@ -1,0 +1,43 @@
+#include "pch.h"
+#include "AlibreVersion.h"
+
+namespace AlibreVersion
+{
+    std::wstring GetVersion(IADRoot* root)
+    {
+        if (root == nullptr) return std::wstring();
+
+        OLECHAR name[] = L"Version";
+        LPOLESTR names[] = { name };
+        DISPID id = DISPID_UNKNOWN;
+        if (FAILED(root->GetIDsOfNames(IID_NULL, names, 1, LOCALE_USER_DEFAULT, &id))) return std::wstring();
+
+        DISPPARAMS noArgs = {};
+        _variant_t result;
+        if (FAILED(root->Invoke(id, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, &noArgs, &result, nullptr, nullptr)) ||
+            result.vt != VT_BSTR || result.bstrVal == nullptr)
+            return std::wstring();
+
+        return result.bstrVal;
+    }
+
+    int GetBuild(IADRoot* root)
+    {
+        const auto version = GetVersion(root);
+
+        // The last run of digits.
+        const auto end = version.find_last_of(L"0123456789");
+        if (end == std::wstring::npos) return 0;
+        auto start = end;
+        while (start > 0 && iswdigit(version[start - 1])) --start;
+
+        try
+        {
+            return std::stoi(version.substr(start, end - start + 1));
+        }
+        catch (const std::exception&)
+        {
+            return 0;
+        }
+    }
+}

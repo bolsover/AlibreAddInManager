@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <!-- A standalone WPF tool for catalog authors; it never loads AlibreX. -->
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net10.0-windows</TargetFramework>
+        <UseWPF>true</UseWPF>
+        <LangVersion>10.0</LangVersion>
+        <Nullable>disable</Nullable>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <RootNamespace>AlibreCatalogManager</RootNamespace>
+        <AssemblyName>AlibreCatalogManager</AssemblyName>
+        <ProjectGuid>{6E0C1B7A-3F52-4C8E-9D41-A2B7F05C3E19}</ProjectGuid>
+        <Deterministic>true</Deterministic>
+        <!-- AnyCPU runs as a 64-bit process on 64-bit Windows, so Program Files and the
+             registry are the 64-bit views. -->
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <!-- Keep the output in bin\<Configuration>\, as before the move to .NET 10. -->
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+
+        <Version>1.0.1</Version>
+        <Product>AlibreCatalogManager</Product>
+        <Description>Authoring tool for the Alibre add-on catalog.</Description>
+        <Copyright>Copyright © 2026</Copyright>
+    </PropertyGroup>
+    <ItemGroup>
+        <!-- Templates for a new add-on, named Templates.<Folder>.<File>; %%Token%% placeholders are filled by AddOnGenerator. -->
+        <EmbeddedResource Include="Templates\*\*.template">
+            <LogicalName>Templates.$([System.String]::Copy('%(RecursiveDir)').TrimEnd('\')).%(Filename)%(Extension)</LogicalName>
+            <!-- Otherwise "X.cs.template" is taken as culture "cs" (Czech) and lands in a satellite assembly. -->
+            <WithCulture>false</WithCulture>
+        </EmbeddedResource>
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="..\..\README.md" Link="README.md"/>
+    </ItemGroup>
+    <!-- Shared with the add-on manager: catalog and package models, validation, Alibre install
+         detection (no COM). It is also compiled into .NET Framework 4.8 add-ons there, so keep it
+         compatible with both. -->
+    <Import Project="..\..\..\AlibreAddInManager\src\AlibreAddOnManager.Shared\AlibreAddOnManager.Shared.projitems" Label="Shared"/>
+</Project>

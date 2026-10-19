@@ -4,6 +4,7 @@
     <attachedFolders>
       <Path>.claude</Path>
       <Path>Reference</Path>
+      <Path>Setup</Path>
       <Path>Shared</Path>
       <Path>deploy</Path>
     </attachedFolders>

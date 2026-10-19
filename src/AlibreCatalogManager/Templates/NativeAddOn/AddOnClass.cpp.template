@@ -1,0 +1,225 @@
+#include "pch.h"
+#include "%%AddOnName%%AddOn.h"
+
+namespace
+{
+    HRESULT ReturnString(const std::wstring& text, BSTR* result)
+    {
+        if (result == nullptr) return E_POINTER;
+        *result = SysAllocString(text.c_str());
+        return *result != nullptr ? S_OK : E_OUTOFMEMORY;
+    }
+
+    std::wstring Widen(const char* text)
+    {
+        const int length = MultiByteToWideChar(CP_ACP, 0, text, -1, nullptr, 0);
+        if (length <= 1) return std::wstring();
+        std::wstring result(static_cast<size_t>(length - 1), L'\0');
+        MultiByteToWideChar(CP_ACP, 0, text, -1, &result[0], length);
+        return result;
+    }
+}
+
+%%AddOnName%%AddOn::%%AddOnName%%AddOn(IADRoot* root, HWND parentWindow)
+    : _root(root), _parentWindow(parentWindow), _build(AlibreVersion::GetBuild(root))
+{
+}
+
+std::wstring %%AddOnName%%AddOn::CommandToolTip() const
+{
+    if (!IsSupportedVersion())
+        return L"Requires Alibre Design build " + std::to_wstring(AlibreVersion::MinimumBuild) +
+               L" or later (this is build " + std::to_wstring(_build) + L")";
+    return L"%%Description%%";
+}
+
+// IUnknown
+
+HRESULT %%AddOnName%%AddOn::QueryInterface(REFIID riid, void** ppvObject)
+{
+    if (ppvObject == nullptr) return E_POINTER;
+    if (riid == IID_IUnknown || riid == IID_IDispatch || riid == __uuidof(IAlibreAddOn))
+    {
+        *ppvObject = static_cast<IAlibreAddOn*>(this);
+        AddRef();
+        return S_OK;
+    }
+
+    *ppvObject = nullptr;
+    return E_NOINTERFACE;
+}
+
+ULONG %%AddOnName%%AddOn::AddRef()
+{
+    return static_cast<ULONG>(InterlockedIncrement(&_refCount));
+}
+
+ULONG %%AddOnName%%AddOn::Release()
+{
+    const auto count = InterlockedDecrement(&_refCount);
+    if (count == 0) delete this;
+    return static_cast<ULONG>(count);
+}
+
+// IDispatch
+
+HRESULT %%AddOnName%%AddOn::GetTypeInfoCount(UINT* pctinfo)
+{
+    if (pctinfo == nullptr) return E_POINTER;
+    *pctinfo = 0;
+    return S_OK;
+}
+
+HRESULT %%AddOnName%%AddOn::GetTypeInfo(UINT, LCID, ITypeInfo** ppTInfo)
+{
+    if (ppTInfo != nullptr) *ppTInfo = nullptr;
+    return E_NOTIMPL;
+}
+
+HRESULT %%AddOnName%%AddOn::GetIDsOfNames(REFIID, LPOLESTR*, UINT, LCID, DISPID*)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT %%AddOnName%%AddOn::Invoke(DISPID, REFIID, LCID, WORD, DISPPARAMS*, VARIANT*, EXCEPINFO*, UINT*)
+{
+    return E_NOTIMPL;
+}
+
+// IAlibreAddOn
+
+HRESULT %%AddOnName%%AddOn::get_RootMenuItem(long* pRootMenuID)
+{
+    if (pRootMenuID == nullptr) return E_POINTER;
+    *pRootMenuID = MenuIdRoot;
+    return S_OK;
+}
+
+HRESULT %%AddOnName%%AddOn::HasSubMenus(long menuID, VARIANT_BOOL* pHasSubMenus)
+{
+    if (pHasSubMenus == nullptr) return E_POINTER;
+    *pHasSubMenus = menuID == MenuIdRoot ? VARIANT_TRUE : VARIANT_FALSE;
+    return S_OK;
+}
+
+HRESULT %%AddOnName%%AddOn::SubMenuItems(long menuID, SAFEARRAY** pSubMenuIDs)
+{
+    if (pSubMenuIDs == nullptr) return E_POINTER;
+    const ULONG count = menuID == MenuIdRoot ? 1 : 0;
+    *pSubMenuIDs = SafeArrayCreateVector(VT_I4, 0, count);
+    if (*pSubMenuIDs == nullptr) return E_OUTOFMEMORY;
+    if (count > 0)
+    {
+        LONG index = 0;
+        long id = MenuIdCommand;
+        SafeArrayPutElement(*pSubMenuIDs, &index, &id);
+    }
+    return S_OK;
+}
+
+HRESULT %%AddOnName%%AddOn::MenuItemText(long menuID, BSTR* pMenuDisplayText)
+{
+    switch (menuID)
+    {
+    case MenuIdRoot: return ReturnString(L"%%MenuText%%", pMenuDisplayText);
+    case MenuIdCommand: return ReturnString(Title, pMenuDisplayText);
+    default: return ReturnString(L"", pMenuDisplayText);
+    }
+}
+
+HRESULT %%AddOnName%%AddOn::PopupMenu(long menuID, VARIANT_BOOL* pIsPopup)
+{
+    if (pIsPopup == nullptr) return E_POINTER;
+    *pIsPopup = menuID == MenuIdRoot ? VARIANT_TRUE : VARIANT_FALSE;
+    return S_OK;
+}
+
+HRESULT %%AddOnName%%AddOn::HasPersistentDataToSave(BSTR, VARIANT_BOOL* pHasData)
+{
+    if (pHasData == nullptr) return E_POINTER;
+    *pHasData = VARIANT_FALSE;
+    return S_OK;
+}
+
+HRESULT %%AddOnName%%AddOn::MenuItemState(long menuID, BSTR, enum ADDONMenuStates* pType)
+{
+    if (pType == nullptr) return E_POINTER;
+    // The root stays enabled so the drop-down (and the tooltip explaining
+    // why the command is greyed) can always be opened.
+    if (menuID == MenuIdRoot)
+        *pType = ADDONMenuStates_ADDON_MENU_ENABLED;
+    else
+        *pType = menuID == MenuIdCommand && IsSupportedVersion() ? ADDONMenuStates_ADDON_MENU_ENABLED : ADDONMenuStates_ADDON_MENU_GRAYED;
+    return S_OK;
+}
+
+HRESULT %%AddOnName%%AddOn::MenuItemToolTip(long menuID, BSTR* pToolTip)
+{
+    return ReturnString(menuID == MenuIdCommand ? CommandToolTip() : std::wstring(), pToolTip);
+}
+
+HRESULT %%AddOnName%%AddOn::InvokeCommand(long menuID, BSTR, IAlibreAddOnCommand** pCommand)
+{
+    if (pCommand == nullptr) return E_POINTER;
+    *pCommand = nullptr;
+    if (menuID == MenuIdCommand) RunCommand(_parentWindow);
+    return S_OK;
+}
+
+// The command's work. Called by InvokeCommand from the add-on's menu%%#HomeWorkspace%%, and by
+// the AddOnInvoke export when the add-on is launched from the Home window%%/HomeWorkspace%%.
+void %%AddOnName%%AddOn::RunCommand(HWND owner)
+{
+    // No exception may escape into Alibre.
+    try
+    {
+        if (!IsSupportedVersion())
+        {
+            MessageBoxW(owner, CommandToolTip().c_str(), Title, MB_OK | MB_ICONWARNING);
+            return;
+        }
+
+        // TODO: the add-on's work goes here.
+        const std::wstring message = std::wstring(Title) + L" is running in Alibre Design " +
+                                     AlibreVersion::GetVersion(_root) + L".";
+        MessageBoxW(owner, message.c_str(), Title, MB_OK | MB_ICONINFORMATION);
+    }
+    catch (const _com_error& e)
+    {
+        const _bstr_t description = e.Description();
+        const std::wstring message = description.length() > 0 ? static_cast<const wchar_t*>(description) : e.ErrorMessage();
+        MessageBoxW(owner, message.c_str(), Title, MB_OK | MB_ICONERROR);
+    }
+    catch (const std::exception& e)
+    {
+        MessageBoxW(owner, Widen(e.what()).c_str(), Title, MB_OK | MB_ICONERROR);
+    }
+}
+
+HRESULT %%AddOnName%%AddOn::LoadData(IStream*, BSTR)
+{
+    return S_OK;
+}
+
+HRESULT %%AddOnName%%AddOn::SaveData(IStream*, BSTR)
+{
+    return S_OK;
+}
+
+HRESULT %%AddOnName%%AddOn::setIsAddOnLicensed(VARIANT_BOOL)
+{
+    return S_OK;
+}
+
+// Icon file name, looked up in the folder holding the .adc.
+HRESULT %%AddOnName%%AddOn::MenuIcon(long, BSTR* pIconFile)
+{
+    return ReturnString(L"%%AddOnName%%.ico", pIconFile);
+}
+
+HRESULT %%AddOnName%%AddOn::UseDedicatedRibbonTab(VARIANT_BOOL* pUseTab)
+{
+    if (pUseTab == nullptr) return E_POINTER;
+    *pUseTab = VARIANT_FALSE;
+    return S_OK;
+}

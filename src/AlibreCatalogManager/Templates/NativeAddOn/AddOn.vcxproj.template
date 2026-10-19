@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <!-- x64 only: Alibre Design is 64-bit and loads only x64 native DLLs. -->
+    <ItemGroup Label="ProjectConfigurations">
+        <ProjectConfiguration Include="Debug|x64">
+            <Configuration>Debug</Configuration>
+            <Platform>x64</Platform>
+        </ProjectConfiguration>
+        <ProjectConfiguration Include="Release|x64">
+            <Configuration>Release</Configuration>
+            <Platform>x64</Platform>
+        </ProjectConfiguration>
+    </ItemGroup>
+    <PropertyGroup Label="Globals">
+        <ProjectGuid>{%%ProjectGuid%%}</ProjectGuid>
+        <!-- A native Alibre add-on: a Win32 DLL exporting AddOnLoad / AddOnInvoke /
+             AddOnUnload / GetAddOnInterface. Needs MSBuild from Visual Studio or
+             Build Tools with the C++ workload (Rider's bundled MSBuild has no C++ targets). -->
+        <Keyword>Win32Proj</Keyword>
+        <RootNamespace>%%AddOnName%%</RootNamespace>
+        <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+        <!-- A command-line build with no /p:Platform would otherwise default to Win32. -->
+        <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+        <!-- Alibre's Program folder, for AlibreX_64.tlb / AlibreAddOn_64.tlb.
+             Override on the command line: /p:AlibreProgramDir=... -->
+        <AlibreProgramDir Condition=" '$(AlibreProgramDir)' == '' ">%%AlibreProgramDir%%</AlibreProgramDir>
+    </PropertyGroup>
+    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props"/>
+    <PropertyGroup Label="Configuration">
+        <ConfigurationType>DynamicLibrary</ConfigurationType>
+        <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
+        <CharacterSet>Unicode</CharacterSet>
+    </PropertyGroup>
+    <PropertyGroup Label="Configuration" Condition=" '$(Configuration)' == 'Debug' ">
+        <UseDebugLibraries>true</UseDebugLibraries>
+    </PropertyGroup>
+    <PropertyGroup Label="Configuration" Condition=" '$(Configuration)' == 'Release' ">
+        <UseDebugLibraries>false</UseDebugLibraries>
+        <WholeProgramOptimization>true</WholeProgramOptimization>
+    </PropertyGroup>
+    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props"/>
+    <PropertyGroup>
+        <!-- bin\<Configuration> holds only what is installed or packaged; the import
+             library and other intermediates stay in obj. -->
+        <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
+        <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
+        <TargetName>%%AddOnName%%</TargetName>
+    </PropertyGroup>
+    <ItemDefinitionGroup>
+        <ClCompile>
+            <PrecompiledHeader>Use</PrecompiledHeader>
+            <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+            <WarningLevel>Level3</WarningLevel>
+            <SDLCheck>true</SDLCheck>
+            <ConformanceMode>true</ConformanceMode>
+            <LanguageStandard>stdcpp17</LanguageStandard>
+            <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;NOMINMAX;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <!-- #import finds the type libraries on the include path. -->
+            <AdditionalIncludeDirectories>$(AlibreProgramDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+            <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+            <!-- Expected and benign with the Alibre type libraries: C4278 'SendMessage'
+                 is already a macro, C4192 IStream excluded. -->
+            <DisableSpecificWarnings>4278;4192;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+        </ClCompile>
+        <Link>
+            <SubSystem>Windows</SubSystem>
+            <GenerateDebugInformation>true</GenerateDebugInformation>
+            <ImportLibrary>$(IntDir)$(TargetName).lib</ImportLibrary>
+        </Link>
+    </ItemDefinitionGroup>
+    <!-- Static CRT, so the add-on needs no Visual C++ redistributable. -->
+    <ItemDefinitionGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <ClCompile>
+            <Optimization>Disabled</Optimization>
+            <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+        </ClCompile>
+    </ItemDefinitionGroup>
+    <ItemDefinitionGroup Condition=" '$(Configuration)' == 'Release' ">
+        <ClCompile>
+            <FunctionLevelLinking>true</FunctionLevelLinking>
+            <IntrinsicFunctions>true</IntrinsicFunctions>
+            <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+        </ClCompile>
+        <Link>
+            <EnableCOMDATFolding>true</EnableCOMDATFolding>
+            <OptimizeReferences>true</OptimizeReferences>
+        </Link>
+    </ItemDefinitionGroup>
+    <ItemGroup>
+        <ClCompile Include="pch.cpp">
+            <PrecompiledHeader>Create</PrecompiledHeader>
+        </ClCompile>
+        <ClCompile Include="AlibreAddOn.cpp"/>
+        <ClCompile Include="%%AddOnName%%AddOn.cpp"/>
+        <ClCompile Include="AlibreVersion.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="pch.h"/>
+        <ClInclude Include="%%AddOnName%%AddOn.h"/>
+        <ClInclude Include="AlibreVersion.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <CopyFileToFolders Include="%%AddOnName%%.adc">
+            <DestinationFolders>$(OutDir)</DestinationFolders>
+        </CopyFileToFolders>
+        <CopyFileToFolders Include="%%AddOnName%%.ico">
+            <DestinationFolders>$(OutDir)</DestinationFolders>
+        </CopyFileToFolders>
+        <CopyFileToFolders Include="addon.json">
+            <DestinationFolders>$(OutDir)</DestinationFolders>
+        </CopyFileToFolders>
+    </ItemGroup>
+    <ItemGroup>
+%%DeployItems%%    </ItemGroup>
+    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets"/>
+</Project>
