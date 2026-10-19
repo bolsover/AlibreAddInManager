@@ -96,7 +96,7 @@
         <None Include="online-addon-directory.md"/>
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\..\AlibreAddOnManager.Shared\AlibreAddOnManager.Shared.csproj">
+      <ProjectReference Include="..\AlibreAddOnManager.Shared\AlibreAddOnManager.Shared.csproj">
         <Project>{6a4e5175-cd1a-4372-84b7-73363f26e20d}</Project>
         <Name>AlibreAddOnManager.Shared</Name>
       </ProjectReference>
