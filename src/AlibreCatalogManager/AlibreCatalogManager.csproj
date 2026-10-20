@@ -34,9 +34,9 @@
         <None Include="..\..\README.md" Link="README.md"/>
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\AlibreAddOnManager.Helper\AlibreAddOnManager.Helper.csproj" />
+      <!-- Only Shared: every project referenced here is listed in deps.json and must
+           then ship in the installer (.build\AlibreCatalogManager.iss). -->
       <ProjectReference Include="..\AlibreAddOnManager.Shared\AlibreAddOnManager.Shared.csproj" />
-      <ProjectReference Include="..\AlibreAddOnManager\AlibreAddOnManager.csproj" />
     </ItemGroup>
    
 </Project>

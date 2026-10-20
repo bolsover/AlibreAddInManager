@@ -5,6 +5,10 @@
 #define MyAppVersion "1.1"
 #define MyAppPublisher "David Bolsover"
 #define MyAppURL "https://github.com/bolsover/AlibreAddOnManager"
+#define MyAppExeName "AlibreCatalogManager.exe"
+; The app is framework-dependent (net10.0-windows, WPF): it needs this shared runtime.
+#define DotNetMajor "10"
+#define DotNetDownloadURL "https://dotnet.microsoft.com/download/dotnet/10.0"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -27,25 +31,62 @@ OutputBaseFilename={#MyAppName}_{#MyAppVersion}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
-ArchitecturesAllowed=x64
-ArchitecturesInstallIn64BitMode=x64
+ArchitecturesAllowed=x64os
+ArchitecturesInstallIn64BitMode=x64os
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "..\src\AlibreCatalogManager\bin\Release\AlibreCatalogManager.deps.json"; DestDir: "{app}"; Flags: ignoreversion
+; Every assembly AlibreCatalogManager.deps.json lists must be here, or the .NET host
+; refuses to start the app. Templates are embedded in AlibreCatalogManager.dll.
+Source: "..\src\AlibreCatalogManager\bin\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\src\AlibreCatalogManager\bin\Release\AlibreCatalogManager.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\src\AlibreCatalogManager\bin\Release\AlibreCatalogManager.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\src\AlibreCatalogManager\bin\Release\AlibreCatalogManager.pdb"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\src\AlibreCatalogManager\bin\Release\AlibreCatalogManager.deps.json"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\src\AlibreCatalogManager\bin\Release\AlibreCatalogManager.runtimeconfig.json"; DestDir: "{app}"; Flags: ignoreversion
+; Package validation, manifests and catalog models (project reference).
+Source: "..\src\AlibreCatalogManager\bin\Release\AlibreAddOnManager.Shared.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\src\AlibreCatalogManager\bin\Release\AlibreAddOnManager.Shared.pdb"; DestDir: "{app}"; Flags: ignoreversion
 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
-
 [Icons]
+Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
+
+[Run]
+Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#MyAppName}}"; Flags: nowait postinstall skipifsilent; Check: IsDesktopRuntimeInstalled
 
 [Registry]
 ;Root: HKLM; Subkey: "SOFTWARE\Alibre Design Add-Ons"; Flags: uninsdeletekeyifempty; Check: IsAdminInstallMode
 ;Root: HKLM; Subkey: "SOFTWARE\Alibre Design Add-Ons"; ValueType: string; ValueName: "{{378829C4-F122-4617-92E0-E36ADD4F9AA8}"; ValueData: "{autopf}\{#MyAppName}"; Check: IsAdminInstallMode
+
+[Code]
+{ True if any x64 Microsoft.WindowsDesktop.App {#DotNetMajor}.x is installed (it includes the base .NET runtime). }
+function IsDesktopRuntimeInstalled: Boolean;
+var
+  FindRec: TFindRec;
+begin
+  Result := FindFirst(ExpandConstant('{commonpf64}\dotnet\shared\Microsoft.WindowsDesktop.App\{#DotNetMajor}.*'), FindRec);
+  if Result then
+    FindClose(FindRec);
+end;
+
+function InitializeSetup: Boolean;
+var
+  ErrorCode: Integer;
+begin
+  Result := True;
+  if IsDesktopRuntimeInstalled then
+    Exit;
+
+  case SuppressibleMsgBox('{#MyAppName} needs the .NET {#DotNetMajor} Desktop Runtime (x64), which is not installed.' + #13#10#13#10 +
+                          'Yes: open the download page and continue setup (install the runtime before starting the app).' + #13#10 +
+                          'No: continue setup without it.' + #13#10 +
+                          'Cancel: quit setup.',
+                          mbConfirmation, MB_YESNOCANCEL, IDNO) of
+    IDYES: ShellExec('open', '{#DotNetDownloadURL}', '', '', SW_SHOWNORMAL, ewNoWait, ErrorCode);
+    IDCANCEL: Result := False;
+  end;
+end;
