@@ -91,6 +91,9 @@ namespace AlibreAddOnManager.Helper
             DeleteDirectory(staging);
             Packages.ExtractSafely(op.PackagePath, staging);
 
+            if (ManagerPaths.SameId(manifest.Id, ManagerPaths.SelfId))
+                CarryOverInnoUninstaller(target, staging);
+
             var movedOld = false;
             try
             {
@@ -135,18 +138,44 @@ namespace AlibreAddOnManager.Helper
             if (tracked == null)
                 throw new InvalidOperationException("Not installed by the add-on manager; only Disable is allowed.");
 
-            AddOnRegistry.DeleteValue(op.Id);
+            if (ManagerPaths.SameId(op.Id, ManagerPaths.SelfId))
+                throw new InvalidOperationException("The add-on manager cannot uninstall itself; use its Windows uninstaller.");
 
             // Delete only a folder we created, and only inside our own root.
+            string removing = null;
             if (Directory.Exists(tracked.Folder))
             {
                 if (!ManagerPaths.IsSameOrUnder(tracked.Folder, ManagerPaths.AddOnsRoot))
                     throw new InvalidOperationException("Tracked folder is outside " + ManagerPaths.AddOnsRoot + "; files left in place.");
-                Directory.Delete(tracked.Folder, true); // fails if a DLL in it is locked
+
+                // Rename first: it fails as a whole if a DLL is locked, rather than
+                // leaving a half-deleted folder that Alibre is still registered to.
+                removing = tracked.Folder.TrimEnd('\\') + ".removing";
+                DeleteDirectory(removing);
+                Directory.Move(tracked.Folder, removing);
             }
 
+            AddOnRegistry.DeleteValue(op.Id);
             _state.Tracked.Remove(tracked);
             _state.Disabled.RemoveAll(d => ManagerPaths.SameId(d.Id, op.Id));
+
+            if (removing != null)
+                TryDeleteDirectory(removing); // unregistered by now; a leftover is harmless
+        }
+
+        /// <summary>
+        /// A self-update replaces the whole folder, which would delete the Inno Setup
+        /// uninstaller the manager was installed with. Copy it into the new folder.
+        /// </summary>
+        private static void CarryOverInnoUninstaller(string target, string staging)
+        {
+            if (!Directory.Exists(target)) return;
+            foreach (var file in Directory.GetFiles(target, ManagerPaths.InnoUninstallerPattern))
+            {
+                var destination = Path.Combine(staging, Path.GetFileName(file));
+                if (!File.Exists(destination))
+                    File.Copy(file, destination);
+            }
         }
 
         private void Disable(PlanOperation op)
@@ -193,7 +222,7 @@ namespace AlibreAddOnManager.Helper
         private static void TryDeleteDirectory(string path)
         {
             try { DeleteDirectory(path); }
-            catch (Exception) { /* a leftover .bak is harmless */ }
+            catch (Exception) { /* a leftover .bak / .removing is harmless */ }
         }
     }
 }

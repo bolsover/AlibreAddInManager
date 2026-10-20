@@ -3,10 +3,9 @@
   <component name="IssBuildSettings">
     <option name="buildHashes">
       <map>
-        <entry key="D:\02_Repository\02_Bolsover\31_AlibreAddOnManager\.build\AlibreAddOnManager .iss|/OD:\02_Repository\02_Bolsover\31_AlibreAddOnManager\out\..\src\AlibreAddOnManager\bin\Setup|c4103f122d27677c9db144cae1394a66" value="cc08ecc6b6874f8b5c9a4e162d4f8d94" />
+        <entry key="D:\02_Repository\02_Bolsover\31_AlibreAddOnManager\.build\AlibreAddOnManager .iss|/OD:\02_Repository\02_Bolsover\31_AlibreAddOnManager\out\..\src\AlibreAddOnManager\bin\Setup|c4103f122d27677c9db144cae1394a66" value="095bfb6525472493e89003d4f970783a" />
       </map>
     </option>
-    <option name="compileOnBuild" value="false" />
     <option name="outputMode" value="SCRIPT" />
   </component>
 </project>

@@ -12,6 +12,22 @@ namespace AlibreAddOnManager
 
         public const string HelperExeName = "AlibreAddOnManager.Helper.exe";
 
+        public const string SharedDllName = "AlibreAddOnManager.Shared.dll";
+
+        /// <summary>
+        /// Files the elevated helper cannot start without. It is run from a copy in
+        /// %TEMP%, so every assembly it references must be copied with it.
+        /// </summary>
+        public static readonly string[] HelperRequiredFiles = { HelperExeName, SharedDllName };
+
+        public static readonly string[] HelperOptionalFiles = { HelperExeName + ".config" };
+
+        /// <summary>
+        /// Inno Setup's uninstaller (unins000.exe/.dat/.msg) lives in the manager's
+        /// folder; a self-update must carry it over or the uninstaller is lost.
+        /// </summary>
+        public const string InnoUninstallerPattern = "unins???.*";
+
         public const string AlibreProcessName = "Alibre Design";
 
         /// <summary>Where this tool installs add-ons. Other add-ons may live anywhere.</summary>

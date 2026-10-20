@@ -5,25 +5,28 @@
 #define MyAppVersion "1.1"
 #define MyAppPublisher "David Bolsover"
 #define MyAppURL "https://github.com/bolsover/AlibreAddOnManager"
+; Also the add-on's .adc Identifier and registry value name (ManagerPaths.SelfId).
+; "{{" is Inno's escape for a literal "{".
+#define MyAppId "{{925B370F-9858-4416-A7D9-1DD8FAAC16A0}"
 
-[Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{925B370F-9858-4416-A7D9-1DD8FAAC16A0}
+[Setup]
+AppId={#MyAppId}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-;AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
+; The manager updates itself into %ProgramData%\Alibre AddOns\<folderName>, so the
+; folder is fixed rather than user-selectable.
 DefaultDirName={autoappdata}\Alibre AddOns\{#MyAppName}
+DisableDirPage=yes
 DefaultGroupName={#MyAppName}
-
-;PrivilegesRequired=lowest
 OutputDir=..\src\AlibreAddOnManager\bin\Setup
 OutputBaseFilename={#MyAppName}_{#MyAppVersion}
-;SetupIconFile=D:\Repository\Jetbrains\Bolsover\AlibreAddOnManager\nexus.ico    
+SetupIconFile=..\src\AlibreAddOnManager\bin\Release\AlibreAddOnManager.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -37,21 +40,72 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Source: "..\src\AlibreAddOnManager\bin\Release\addon.json"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\src\AlibreAddOnManager\bin\Release\AlibreAddOnManager.adc"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\src\AlibreAddOnManager\bin\Release\AlibreAddOnManager.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\src\AlibreAddOnManager\bin\Release\AlibreAddOnManager.Helper.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\src\AlibreAddOnManager\bin\Release\AlibreAddOnManager.Helper.exe.config"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\src\AlibreAddOnManager\bin\Release\AlibreAddOnManager.Helper.pdb"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\src\AlibreAddOnManager\bin\Release\AlibreAddOnManager.pdb"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\src\AlibreAddOnManager\bin\Release\AlibreAddOnManager.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\src\AlibreAddOnManager\bin\Release\AlibreAddOnManager.Shared.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\src\AlibreAddOnManager\bin\Release\AlibreAddOnManager.Shared.pdb"; DestDir: "{app}"; Flags: ignoreversion
-
-
-; NOTE: Don't use "Flags: ignoreversion" on any shared system files
-
+; Elevated helper. The add-on copies it, with AlibreAddOnManager.Shared.dll, to %TEMP%
+; before running it, so both must be present here.
+Source: "..\src\AlibreAddOnManager\bin\Release\AlibreAddOnManager.Helper.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\src\AlibreAddOnManager\bin\Release\AlibreAddOnManager.Helper.exe.config"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\src\AlibreAddOnManager\bin\Release\AlibreAddOnManager.Helper.pdb"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Alibre Design Add-Ons"; Flags: uninsdeletekeyifempty; Check: IsAdminInstallMode
-Root: HKLM; Subkey: "SOFTWARE\Alibre Design Add-Ons"; ValueType: string; ValueName: "{{925B370F-9858-4416-A7D9-1DD8FAAC16A0}"; ValueData: "{autoappdata}\Alibre AddOns\{#MyAppName}"; Check: IsAdminInstallMode
+; uninsdeletevalue: without it the registration outlives the files and Alibre is left
+; pointing at a deleted folder.
+Root: HKLM; Subkey: "SOFTWARE\Alibre Design Add-Ons"; ValueType: string; ValueName: "{#MyAppId}"; ValueData: "{app}"; Flags: uninsdeletevalue; Check: IsAdminInstallMode
+
+[UninstallDelete]
+; A self-update (applied by the helper) can add files Setup never installed.
+Type: filesandordirs; Name: "{app}"
+Type: filesandordirs; Name: "{app}.staging"
+Type: filesandordirs; Name: "{app}.bak"
+; The state of other add-ons (%ProgramData%\Alibre AddOns\.manager) is kept: those
+; add-ons stay installed. Per-user data is left alone (an elevated uninstaller may run
+; as a different account); stale helper copies in %TEMP% are pruned by the add-on.
+
+[Code]
+function IsAlibreRunning: Boolean;
+var
+  Locator, Service, Processes: Variant;
+begin
+  Result := False;
+  try
+    Locator := CreateOleObject('WbemScripting.SWbemLocator');
+    Service := Locator.ConnectServer('.', 'root\CIMV2');
+    Processes := Service.ExecQuery('SELECT ProcessId FROM Win32_Process WHERE Name = ''Alibre Design.exe''');
+    Result := Processes.Count > 0;
+  except
+    // WMI unavailable: don't block; locked files are reported by Setup itself.
+  end;
+end;
+
+{ Alibre locks the add-on DLL while it runs, so files can be neither replaced nor removed. }
+function WaitForAlibreToClose(const Action: String): Boolean;
+begin
+  Result := True;
+  while IsAlibreRunning do
+  begin
+    if MsgBox('Alibre Design is running and has the add-on manager loaded.' + #13#10#13#10 +
+              'Save your work and close Alibre Design, then click Retry to ' + Action + '.',
+              mbError, MB_RETRYCANCEL) <> IDRETRY then
+    begin
+      Result := False;
+      Exit;
+    end;
+  end;
+end;
+
+function InitializeSetup: Boolean;
+begin
+  Result := WaitForAlibreToClose('continue installing');
+end;
+
+function InitializeUninstall: Boolean;
+begin
+  Result := WaitForAlibreToClose('continue uninstalling');
+end;

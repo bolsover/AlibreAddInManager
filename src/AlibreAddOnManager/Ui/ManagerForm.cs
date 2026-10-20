@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,8 @@ namespace AlibreAddOnManager.Ui
     /// </summary>
     public partial class ManagerForm : Form
     {
+        private static readonly string InstallPath = Path.GetDirectoryName(typeof(ManagerForm).Assembly.Location);
+       
         private readonly string _alibreVersion;
         private readonly int _runningBuild;
         private readonly List<AlibreInstall> _installs;
@@ -32,6 +35,7 @@ namespace AlibreAddOnManager.Ui
         public ManagerForm(string alibreVersion)
         {
             InitializeComponent();
+           
             _alibreVersion = alibreVersion;
             _runningBuild = AlibreInstallDetector.ParseBuild(alibreVersion);
             _installs = SafeFindInstalls();
@@ -148,7 +152,7 @@ namespace AlibreAddOnManager.Ui
                     text.AppendLine("Not installed by this manager: it can be disabled, but its files are never deleted. Use its own uninstaller to remove it.");
                     break;
                 case AddOnStatus.Self:
-                    text.AppendLine("This add-on manager. Update it from the catalog or a package; remove it with deploy\\uninstall.ps1.");
+                    text.AppendLine("This add-on manager. Update it from the catalog or a package. Remove it with uninstaller: usually C:\\ProgramData\\Alibre AddOns\\AlibreAddOnManager\\unins000.exe");
                     break;
             }
 

@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using AlibreAddOnManager.Models;
 
 namespace AlibreAddOnManager
@@ -24,17 +25,27 @@ namespace AlibreAddOnManager
             Json.WriteFile(planPath, plan);
 
             var sourceDirectory = Path.GetDirectoryName(typeof(HelperLauncher).Assembly.Location);
-            var sourceExe = Path.Combine(sourceDirectory, ManagerPaths.HelperExeName);
-            if (!File.Exists(sourceExe))
-                throw new FileNotFoundException("The elevated helper is missing from the add-on folder.", sourceExe);
+            foreach (var name in ManagerPaths.HelperRequiredFiles)
+            {
+                var required = Path.Combine(sourceDirectory, name);
+                if (!File.Exists(required))
+                    throw new FileNotFoundException("The elevated helper is incomplete: " + name + " is missing from the add-on folder.", required);
+            }
 
-            var tempDirectory = Path.Combine(Path.GetTempPath(), "AlibreAddOnManager", "helper-" + Guid.NewGuid().ToString("N"));
+            var helperRoot = Path.Combine(Path.GetTempPath(), "AlibreAddOnManager");
+            DeleteStaleCopies(helperRoot);
+            var tempDirectory = Path.Combine(helperRoot, "helper-" + Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(tempDirectory);
+
+            // The helper loads its dependencies from its own folder, so they travel with it.
+            foreach (var name in ManagerPaths.HelperRequiredFiles.Concat(ManagerPaths.HelperOptionalFiles))
+            {
+                var source = Path.Combine(sourceDirectory, name);
+                if (File.Exists(source))
+                    File.Copy(source, Path.Combine(tempDirectory, name));
+            }
+
             var helperExe = Path.Combine(tempDirectory, ManagerPaths.HelperExeName);
-            File.Copy(sourceExe, helperExe);
-            var config = sourceExe + ".config";
-            if (File.Exists(config))
-                File.Copy(config, helperExe + ".config");
 
             try
             {
@@ -47,8 +58,27 @@ namespace AlibreAddOnManager
             }
             catch (Win32Exception e) when (e.NativeErrorCode == ErrorCancelled)
             {
+                TryDeleteDirectory(tempDirectory);
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Removes copies left by earlier runs. A helper that is still running
+        /// (e.g. waiting for Alibre to close) has its EXE locked, so its folder
+        /// survives and is collected next time.
+        /// </summary>
+        private static void DeleteStaleCopies(string helperRoot)
+        {
+            if (!Directory.Exists(helperRoot)) return;
+            foreach (var directory in Directory.GetDirectories(helperRoot, "helper-*"))
+                TryDeleteDirectory(directory);
+        }
+
+        private static void TryDeleteDirectory(string path)
+        {
+            try { Directory.Delete(path, true); }
+            catch (Exception) { /* in use or already gone */ }
         }
     }
 }

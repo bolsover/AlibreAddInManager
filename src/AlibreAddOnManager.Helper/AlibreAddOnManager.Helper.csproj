@@ -66,12 +66,10 @@
         <Project>{6a4e5175-cd1a-4372-84b7-73363f26e20d}</Project>
         <Name>AlibreAddOnManager.Shared</Name>
       </ProjectReference>
-      <ProjectReference Include="..\AlibreAddOnManager\AlibreAddOnManager.csproj">
-        <Project>{9096a4b4-2b5e-4a94-a35a-081af5d9e602}</Project>
-        <Name>AlibreAddOnManager</Name>
-      </ProjectReference>
     </ItemGroup>
-    <!-- Source shared with the add-on, compiled into this assembly (no extra DLL). -->
-    
+    <!-- The add-on copies this EXE and AlibreAddOnManager.Shared.dll to %TEMP% before
+         running it (HelperLauncher / ManagerPaths.HelperRequiredFiles). If you add a
+         reference that is copied to the output folder, add it to that list too. -->
+
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
 </Project>
