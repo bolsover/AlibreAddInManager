@@ -21,6 +21,7 @@
         <Product>AlibreCatalogManager</Product>
         <Description>Authoring tool for the Alibre add-on catalog.</Description>
         <Copyright>Copyright © 2026</Copyright>
+        <ApplicationIcon>AlibreAddOnManager.ico</ApplicationIcon>
     </PropertyGroup>
     <ItemGroup>
         <!-- Templates for a new add-on, named Templates.<Folder>.<File>; %%Token%% placeholders are filled by AddOnGenerator. -->
@@ -31,7 +32,12 @@
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
-        <None Include="..\..\README.md" Link="README.md"/>
+      <Content Include="AlibreAddOnManager.ico">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="..\..\README.md" Link="README.md" />
     </ItemGroup>
     <ItemGroup>
       <!-- Only Shared: every project referenced here is listed in deps.json and must

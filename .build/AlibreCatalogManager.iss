@@ -48,6 +48,7 @@ Source: "..\src\AlibreCatalogManager\bin\Release\AlibreCatalogManager.runtimecon
 ; Package validation, manifests and catalog models (project reference).
 Source: "..\src\AlibreCatalogManager\bin\Release\AlibreAddOnManager.Shared.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\src\AlibreCatalogManager\bin\Release\AlibreAddOnManager.Shared.pdb"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\src\AlibreCatalogManager\bin\Release\AlibreAddOnManager.ico"; DestDir: "{app}"; Flags: ignoreversion
 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
