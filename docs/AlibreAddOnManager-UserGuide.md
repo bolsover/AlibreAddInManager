@@ -6,7 +6,11 @@ The **Alibre Add-On Manager** is an add-on for Alibre Design that installs, upda
 disables and removes other Alibre Design add-ons. It can install add-ons from an
 **online catalog** or from a **`.alibreaddon` package file** you have been sent.
 
-> **Online catalog:** a public catalog of add-ons is available at
+> **Online catalog:** a public catalogs of add-ons is available at:
+> **<https://github.com/bolsover/bolsover.github.io/tree/main/AlibreAddOns/index.json>**
+>
+> and at: 
+> 
 > **<http://www.bolsover.com/catalog/index.json>**. Enter this address on the
 > **Available** tab to browse and install the add-ons it lists.
 

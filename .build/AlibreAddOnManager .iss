@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "AlibreAddOnManager"
-#define MyAppVersion "1.1"
+#define MyAppVersion "1.2"
 #define MyAppPublisher "David Bolsover"
 #define MyAppURL "https://github.com/bolsover/AlibreAddOnManager"
 ; Also the add-on's .adc Identifier and registry value name (ManagerPaths.SelfId).
